@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\app",
+    "\\application",
+    "\\app\\flights",
+    "\\migrations",
+    "\\migrations\\versions"
+  ],
+  "SelectedNode": "\\app\\__init__.py",
+  "PreviewInSolutionExplorer": false
+}

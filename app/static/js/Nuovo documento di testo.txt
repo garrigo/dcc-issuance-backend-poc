@@ -1,0 +1,20 @@
+$("#switch_field").change(function() {
+    alert(($(this).val()));
+    if ($("#switch_field").val().toString() == 'yes') {
+      $('#transaction_field').show();
+      $('#transaction_id').attr('required', '');
+      $('#transaction_id').attr('data-error', 'This field is required.');
+      $('#block_field').hide();
+      $('#block_id').removeAttr('required');
+      $('#block_id').removeAttr('data-error');
+    } else {
+        $('#block_field').show();
+        $('#block_id').attr('required', '');
+        $('#block_id').attr('data-error', 'This field is required.');
+        $('#transaction_field').hide();
+        $('#transaction_id').removeAttr('required');
+        $('#transaction_id').removeAttr('data-error');
+    }
+  });
+  $("#switch_field").trigger("change");
+  alert();
