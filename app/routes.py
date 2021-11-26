@@ -6,5 +6,5 @@ from app import app
 def index():
     return render_template('index.html', query_type="transaction")
 
-from app.flights import bp as flights_blueprint
+from app.api import bp as flights_blueprint
 app.register_blueprint(flights_blueprint)

@@ -3,7 +3,7 @@
     "",
     "\\app",
     "\\application",
-    "\\app\\flights",
+    "\\app\\api",
     "\\migrations",
     "\\migrations\\versions"
   ],
