@@ -5,212 +5,88 @@
 <div class="container" align="center">
 	<div class="row">
 	  <div class="col">
-		<h1><a href="\">Statistics</a></h1>
+		<h1><a href="\">Request Green Pass</a></h1>
 		<hr>
 	  </div>
 	</div>
   </div>
 
-<form id="form" align="center" action="/" method="get" class="p-3">
+
+{% if page == 'home' %}
+<form id="form" align="center" action="/sign" method="post" class="p-3">
 
 
-		
-	<div class="container">
-		<div class="row">
-			<div class="col-xs">
-				<label for="switch_field">Select the query type</label><br>
-				<select class="form-control" id="switch_field">
-			</div>
-			
-			<div class="col-xs">
-				<option value="transaction" col-xs-3>Statistics of a transaction</option>
-			</div>		
-			
-			<div class="col-xs">
-				<option value="flight_delays" col-xs-3>Delays of a flight</option>
-			</div>	
-			
-			<div class="col-xs">
-				<option value="all_delays">Statistics of delayed flights</option>				
-			</div>			
-			
-			<div class="col-xs">
-				<option value="airport_delays">Airports with more delays</option>
-			</div>
-		</div>
+
+</select><br>
+
+<div class="form-group">
+
+	<div id="Issued">
+		<label for="Issued">Issued:</label><br>
+		<input type="text" name="issued" id="issued" placeholder="IT"><br><br>
 	</div>
 
-	</select><br>
-
-	<div class="form-group">
-
-		<div id="ID">
-			<label for="flight_num">Transaction ID:</label><br>
-			<input type="text" name="id" id="id"><br><br>
-		</div>
-
-		<div id="Number">
-			<label for="flight_num">Flight number:</label><br>
-			<input type="text" name="number" id="number"><br><br>
-		</div>
-
-		<div id="Date">
-			<label for="from">Date:</label><br>
-			<input type="date" name="date" id="date"><br><br>
-		</div>
-
-		<div id="From">
-			<label for="from">Start date:</label><br>
-			<input type="date" name="date_from" id="date_from"><br><br>
-		</div>
-
-		<div id="To">
-			<label for="to">End date:</label><br>
-			<input type="date" name="date_to" id="date_to"><br><br>
-		</div>
-
-
-		<div id="Time_from">
-			<label for="from">Start time:</label><br>
-			<input type="time" name="time_from" id="time_from"><br><br>
-		</div>
-
-		<div id="Time_to">
-			<label for="to">End time:</label><br>
-			<input type="time" name="time_to" id="time_to"><br><br>
-		</div>
-
-		<div id="Minimum">
-			<label for="carrier">Minimum Delay:</label><br>
-			<input type="text" name="minimum_delay" id="minimum_delay"><br><br>
-		</div>
-		
-		<div id="Top">
-			<label for="top">Number of airports to display:</label><br>
-			<input type="text" name="top" id="top"><br><br>			
-		</div>
+	<div id="DN">
+		<label for="dn">Doses Done:</label><br>
+		<input type="number" name="dn" id="dn" placeholder=2><br><br>
 	</div>
 
-	<input type="submit" value="Search">
+	<div id="SD">
+		<label for="sd">Doses Required:</label><br>
+		<input type="number" name="sd" id="sd" placeholder=2><br><br>
+	</div>
+
+	<div id="Date">
+		<label for="dt">Vaccine Date:</label><br>
+		<input type="date" name="dt" id="dt" placeholder="2021-08-02"><br><br>
+	</div>
+
+	<div id="Mp">
+		<label for="mp">Medicinal product used:</label><br>
+		<input type="text" name="mp" id="mp" placeholder="EU/1/20/1528"><br><br>
+	</div>
+
+	<div id="Ma">
+		<label for="ma">Marketing authorisation holder:</label><br>
+		<input type="text" name="ma" id="ma" placeholder="ORG-100030215"><br><br>
+	</div>
+
+	<div id="Tg">
+		<label for="tg">Disease or agent targeted:</label><br>
+		<input type="text" name="tg" id="tg" placeholder="840539006"><br><br>
+	</div>
+
+	<div id="Fn">
+		<label for="fn">Surname:</label><br>
+		<input type="text" name="fn" id="fn" placeholder="ARRIGO"><br><br>
+	</div>
+
+	<div id="Gn">
+		<label for="gn">Name:</label><br>
+		<input type="text" name="gn" id="gn" placeholder="GIACOMO"><br><br>
+	</div>
+
+	<div id="Dob">
+		<label for="dob">Date of birth:</label><br>
+		<input type="date" name="dob" id="dob" placeholder="1995-05-18"><br><br>			
+	</div>
+
+	<div id="Ver">
+		<label for="ver">Version:</label><br>
+		<input type="text" name="ver" id="ver" placeholder="1.0.0"><br><br>
+	</div>	
+
+
+</div>
+
+<input type="submit" value="Submit">
 
 </form>
-{% if query_type == 'transaction' %}
-	<br><br>
-	<strong class="d-block mb-3">{{message}}</strong>
-	{% if transaction %}
-		{% for name, value in transaction.items() %}
-			<li>{{ name }}: {{ value }}</li>
-		{% endfor %}
-	{% endif %}
-
-{% elif query_type == 'flight_delays' %}
+{% elif page == 'generated_gp' %}
 <br><br>
-<strong class="d-block mb-3">{{message}}</strong>
-	{% if flights %}
-		<ol>
-		{% for flight in flights %}
-			<li>
-			Delay of departure: {{flight['dep_delay']}}<br>
-			Delay of landing: {{flight['arr_delay']}}
-			</li><br><br>
-		{% endfor %}
-	{% endif %}
+<strong class="d-block mb-3">{{payload}}</strong>
 
-{% elif query_type == 'all_delays' %}
-	<br><br>
-	<strong class="d-block mb-3">{{message}}</strong>
-	{% if flights %}
-		<ol>
-		{% for flight in flights %}
-			<li>
-			{% for name, value in flight.items() %}
-				{{ name }}: {{ value }}<br>
-			{% endfor %} 
-			</li><br><br>
-		{% endfor %}
-		</ol>
-	{% endif %}
-{% elif query_type == 'airport_delays' %}
-	<br><br>
-	<strong class="d-block mb-3">{{message}}</strong>
-	{% if airports %}
-		<ol>
-		{% for airport in airports %}
-			<li>
-			{% for name, value in airport.items() %}
-				{{ name }}: {{ value }}<br>
-			{% endfor %} 
-			</li><br><br>
-		{% endfor %}
-		</ol>
-	{% endif %}
+
 {% endif %}
 
-{% endblock %}
-
-{% block script %}
-<script type="text/javascript">
-
-$("#switch_field").change(function() {
-    if ($("#switch_field").val().toString() == 'transaction') {
-	  $('#form').attr('action', '/transaction');
-	  $('#ID').show();
-      $('#Number').hide();
-	  $('#Date').hide();
-	  $('#From').hide();
-	  $('#To').hide();
-	  $('#Time_from').hide();
-	  $('#Time_to').hide();	  
-	  $('#Minimum').hide();
-	  $('#Top').hide();	 	  
-    }
-	else if ($("#switch_field").val().toString() == 'flight_delays')
-	{
-		$('#ID').hide();
-		$('#Number').show();
-		$('#Date').show();
-		$('#From').hide();
-		$('#To').hide();
-		$('#Time_from').hide();
-	  	$('#Time_to').hide();	 		
-		$('#Minimum').hide();
-		$('#Top').hide();	
-		$('#form').attr('action', '/delays/flight');
-	}
-	else if($("#switch_field").val().toString() == 'all_delays')
-	{
-		$('#ID').hide();
-		$('#Number').hide();
-		$('#Date').hide();
-		$('#From').show();
-		$('#To').show();
-		$('#Minimum').show();
-		$('#Time_from').hide();
-	  	$('#Time_to').hide();	 		
-		$('#Top').hide();	
-		$('#form').attr('action', '/delays/all');
-	}
-	else
-	{
-		$('#ID').hide();
-		$('#Number').hide();
-		$('#Date').hide();
-		$('#From').hide();
-		$('#To').hide();
-		$('#Minimum').hide();
-		$('#Time_from').show();
-	  	$('#Time_to').show();				
-		$('#Top').show();	
-		$('#form').attr('action', '/delays/airports');
-	}
-    
-  });
-  $("#switch_field").trigger("change");
-
-  $( document ).ready(function() {
-	var query='{{query_type}}';
-    $("#switch_field").val(query).change();
-	});
-
-</script>
 {% endblock %}
