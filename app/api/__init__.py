@@ -2,6 +2,7 @@ from datetime import date
 import time
 from flask import Blueprint, abort, request, jsonify, render_template, url_for, redirect
 from app.func import *
+from PIL import Image
 
 
 bp = Blueprint('api', __name__)
@@ -53,10 +54,10 @@ def sign():
         }
         
         base45_data = sign_GP(payload, 0)
-        # generate_qrcode(base45_data)
+
         return render_template('index.html',
                                 page="generated_gp",
-                                payload=str(base45_data.hex())
+                                payload=base45_data.decode('utf-8')
         )
     else:
         render_template('index.html', page="home")

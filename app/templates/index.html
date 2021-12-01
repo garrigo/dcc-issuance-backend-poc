@@ -2,10 +2,11 @@
 {% extends "base.html" %}
 {% block main %}
 
+
 <div class="container" align="center">
 	<div class="row">
 	  <div class="col">
-		<h1><a href="\">Request Green Pass</a></h1>
+		<h1><a href="\">Issue Green Pass</a></h1>
 		<hr>
 	  </div>
 	</div>
@@ -82,11 +83,37 @@
 <input type="submit" value="Submit">
 
 </form>
-{% elif page == 'generated_gp' %}
-<br><br>
-<strong class="d-block mb-3">{{payload}}</strong>
+
+{% else %}
+<div class="rowd-flex flex-column mx-auto" style="width: 85%;">
+
+	<div class="row p-2">
+		<div id="error-msg" role="alert"></div>
+	</div>
+
+	<div class="row p-2">
+		<div id="succ-msg" role="alert"></div>
+	</div>
+
+	<div class="row p-2">
+		<div class="max-vw-50" id="qrcode-canvas"></div>
+	</div>
+	<div class="row p-2">
+		<div class="col-sm">
+			<input type="button" class="btn btn-primary" style="display: none;" id="download"
+				value="Download QR code">
+		</div>
+	</div>
+
+</div>
 
 
 {% endif %}
+{% block javascript %}
+<script type="text/javascript">
+	{% include 'qr_generator.js' %}
+</script>
 
 {% endblock %}
+{% endblock %}
+
