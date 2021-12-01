@@ -2,7 +2,6 @@ from datetime import date
 import time
 from flask import Blueprint, abort, request, jsonify, render_template, url_for, redirect
 from app.func import *
-from PIL import Image
 
 
 bp = Blueprint('api', __name__)
@@ -33,11 +32,11 @@ def sign():
                 1: {
                     "v": [
                         {
-                            "dn": request.form['dn'],
+                            "dn": int(request.form['dn']),
                             "ma": request.form['ma'],
                             "dt": request.form['dt'],
                             "mp": request.form['mp'],
-                            "sd": request.form['sd'],
+                            "sd": int(request.form['sd']),
                             "tg": request.form['tg'],
                         }
                     ],
@@ -52,12 +51,10 @@ def sign():
                 }
             }
         }
-        
         base45_data = sign_GP(payload, 0)
-
         return render_template('index.html',
                                 page="generated_gp",
-                                payload=base45_data.decode('utf-8')
+                                payload=base45_data
         )
     else:
         render_template('index.html', page="home")

@@ -4,9 +4,6 @@ $( document ).ready(function() {
         var payload='{{payload}}';
         var qrString = String(payload);
 
-        // remove health certificate version
-        qrString = qrString.replace("HC1:", "");
-
         // generate new qr code
         // documentation: https://github.com/kozakdenys/qr-code-styling
         // can be improved to make options be selected by user
