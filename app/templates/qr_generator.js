@@ -1,6 +1,6 @@
 $( document ).ready(function() {
-    var page = '{{page}}'
-    if (page == 'generated_gp'){
+    var page = '{{generated}}'
+    if (page){
         var payload='{{payload}}';
         var qrString = String(payload);
 

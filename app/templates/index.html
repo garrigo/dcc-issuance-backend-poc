@@ -13,68 +13,123 @@
   </div>
 
 
-{% if page == 'home' %}
-<form id="form" align="center" action="/sign" method="post" class="p-3">
+<div class="col offset-md-1">
+<form id="form"  action="/sign" method="post" class="p-3">
 
 
+	<div class="container">
+		<div class="row">
+			<div class="col-xs">
+				<label for="switch_field">Select the type of certificate to issue:</label><br>
+				<select class="form-control" id="switch_field">
+			</div>
+			
+			<div class="col-xs">
+				<option value="vaccine" col-xs-3>Vaccine</option>
+			</div>		
+			
+			<div class="col-xs">
+				<option value="test" col-xs-3>Test</option>
+			</div>	
+			
+			<div class="col-xs">
+				<option value="recovery">Recovery</option>				
+			</div>			
+			
+		</div>
+	</div>
 
-</select><br>
+	</select><br>
 
 <div class="form-group">
 
+	<div id="Type">
+		<input type="hidden" name="type" id="type" value="v">
+	</div>
+
 	<div id="Issued">
 		<label for="Issued">Issued:</label><br>
-		<input type="text" name="issued" id="issued" placeholder="IT"><br><br>
-	</div>
-
-	<div id="DN">
-		<label for="dn">Doses Done:</label><br>
-		<input type="number" name="dn" id="dn" placeholder=2><br><br>
-	</div>
-
-	<div id="SD">
-		<label for="sd">Doses Required:</label><br>
-		<input type="number" name="sd" id="sd" placeholder=2><br><br>
-	</div>
-
-	<div id="Date">
-		<label for="dt">Vaccine Date:</label><br>
-		<input type="date" name="dt" id="dt" placeholder="2021-08-02"><br><br>
-	</div>
-
-	<div id="Mp">
-		<label for="mp">Medicinal product used:</label><br>
-		<input type="text" name="mp" id="mp" placeholder="EU/1/20/1528"><br><br>
-	</div>
-
-	<div id="Ma">
-		<label for="ma">Marketing authorisation holder:</label><br>
-		<input type="text" name="ma" id="ma" placeholder="ORG-100030215"><br><br>
+		<input type="text" name="issued" id="issued" value="IT"><br><br>
 	</div>
 
 	<div id="Tg">
 		<label for="tg">Disease or agent targeted:</label><br>
-		<input type="text" name="tg" id="tg" placeholder="840539006"><br><br>
+		<input type="text" name="tg" id="tg" value="840539006"><br><br>
+	</div>
+
+	<div id="Mp">
+		<label for="mp">Medicinal product used:</label><br>
+		<input type="text" name="mp" id="mp" value="EU/1/20/1528"><br><br>
+	</div>
+
+	<div id="Ma">
+		<label for="ma">Marketing authorisation holder:</label><br>
+		<input type="text" name="ma" id="ma" value="ORG-100030215"><br><br>
+	</div>
+
+	<div id="Dn">
+		<label for="dn">Doses Done:</label><br>
+		<input type="number" name="dn" id="dn" value=2><br><br>
+	</div>
+
+	<div id="Sd">
+		<label for="sd">Doses Required:</label><br>
+		<input type="number" name="sd" id="sd" value=2><br><br>
+	</div>
+
+	<div id="Dt">
+		<label for="dt">Vaccine Date:</label><br>
+		<input type="date" name="dt" id="dt" value="2021-08-02"><br><br>
+	</div>
+
+	<div id="Tt">
+		<label for="tt">Type of test:</label><br>
+		<input type="text" name="tt" id="tt" value="LP217198-3"><br><br>
+	</div>
+
+	<div id="Sc">
+		<label for="sc">Date and time of test collection:</label><br>
+		<input type="datetime-local" name="sc" id="sc" value="2021-06-12T10:30"><br><br>
+	</div>
+
+	<div id="Tr">
+		<label for="tr">Result of the test:</label><br>
+		<input type="text" name="tr" id="tr" value="260415000"><br><br>
+	</div>
+
+	<div id="Fr">
+		<label for="fr">Date of first positive NAAT test result:</label><br>
+		<input type="date" name="fr" id="fr" value="2021-06-12"><br><br>
+	</div>
+
+	<div id="Df">
+		<label for="df">Certificate valid from:</label><br>
+		<input type="date" name="df" id="df" value="2021-08-12"><br><br>
+	</div>
+
+	<div id="Du">
+		<label for="du">Certificate valid until:</label><br>
+		<input type="tedatext" name="du" id="du" value="2022-08-12"><br><br>
 	</div>
 
 	<div id="Fn">
 		<label for="fn">Surname:</label><br>
-		<input type="text" name="fn" id="fn" placeholder="ARRIGO"><br><br>
+		<input type="text" name="fn" id="fn" value="ARRIGO"><br><br>
 	</div>
 
 	<div id="Gn">
 		<label for="gn">Name:</label><br>
-		<input type="text" name="gn" id="gn" placeholder="GIACOMO"><br><br>
+		<input type="text" name="gn" id="gn" value="GIACOMO"><br><br>
 	</div>
 
 	<div id="Dob">
 		<label for="dob">Date of birth:</label><br>
-		<input type="date" name="dob" id="dob" placeholder="1995-05-18"><br><br>			
+		<input type="date" name="dob" id="dob" value="1995-05-18"><br><br>			
 	</div>
 
 	<div id="Ver">
 		<label for="ver">Version:</label><br>
-		<input type="text" name="ver" id="ver" placeholder="1.0.0"><br><br>
+		<input type="text" name="ver" id="ver" value="1.0.0"><br><br>
 	</div>	
 
 
@@ -83,9 +138,11 @@
 <input type="submit" value="Submit">
 
 </form>
+</div>
 
-{% else %}
-<div class="rowd-flex flex-column mx-auto" style="width: 85%;">
+<div class="col offset-md-1">
+{% if generated %}
+<div class="p-3">
 
 	<div class="row p-2">
 		<div id="error-msg" role="alert"></div>
@@ -109,11 +166,14 @@
 
 
 {% endif %}
+</div>
 {% block javascript %}
+<script type="text/javascript">
+	{% include 'switch_type.js' %}
+</script>
 <script type="text/javascript">
 	{% include 'qr_generator.js' %}
 </script>
-
-{% endblock %}
 {% endblock %}
 
+{% endblock %}
