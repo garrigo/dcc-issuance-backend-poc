@@ -1,9 +1,9 @@
 import zlib
 import base45
-from cwt import COSEKey, COSE
+from cwt import COSEKey
 import cbor_json
 from cose.messages import Sign1Message
-from cose.keys import EC2Key, CoseKey
+from cose.keys import CoseKey
 from cose.headers import Algorithm, KID
 from cose.algorithms import  Es256
 from cose.keys.curves import  P256

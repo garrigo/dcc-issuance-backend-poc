@@ -16,6 +16,7 @@ def sign():
     if request.method == 'POST':
         today = int(time.mktime(time.strptime(str(date.today()), "%Y-%m-%d")))
         cert_type = request.form['type']
+
         if (cert_type == 'v'):
             payload = {
                 4: today+YEAR_IN_SECONDS,
@@ -44,7 +45,7 @@ def sign():
                     }
                 }
             }
-        elif (cert_type == 't'):
+        elif (cert_type == 't'):       
             payload = {
                 4: today+YEAR_IN_SECONDS,
                 6: today,
@@ -56,7 +57,7 @@ def sign():
                                 "tg": request.form['tg'],
                                 "tt": request.form['tt'],
                                 "ma": request.form['ma'],
-                                "sc": request.form['sc'],
+                                "sc": request.form['sc']+":00"+request.form['time_zone'],
                                 "tr": request.form['tr'], 
                             }
                         ],

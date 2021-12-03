@@ -1,6 +1,8 @@
 $("#switch_field").change(function() {
     if ($("#switch_field").val().toString() == 'vaccine') {
         $('#type').val('v');
+        $('#ma_label').val('Marketing authorisation holder:');
+        $('#ma').val('ORG-100030215');
         $('#Mp').show();
         $('#Ma').show();
         $('#Dn').show();
@@ -17,6 +19,8 @@ $("#switch_field").change(function() {
 	else if ($("#switch_field").val().toString() == 'test')
 	{
         $('#type').val('t');
+        $('#ma_label').val('Test device identifier:');
+        $('#ma').val('1232');
         $('#Mp').hide();
         $('#Ma').show();
         $('#Dn').hide();
@@ -49,5 +53,13 @@ $("#switch_field").change(function() {
 $("#switch_field").trigger("change");
 
 $( document ).ready(function() {
-
+  var date = new Date();
+  date.setDate(date.getDate() - 1);
+  var yesterday = date.toJSON().slice(0,10);
+  $('#sc').val(yesterday+"T23:59");
+  offset = (new Date().getTimezoneOffset())/-60;
+  time_zone = String(offset).padStart(2, '0');
+  if(offset >= 0)
+    time_zone = "+"+time_zone;
+  $('#time_zone').val(time_zone);
 });

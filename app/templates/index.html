@@ -47,6 +47,10 @@
 		<input type="hidden" name="type" id="type" value="v">
 	</div>
 
+	<div id="TimeZone">
+		<input type="hidden" name="time_zone" id="time_zone" value="">
+	</div>
+
 	<div id="Issued">
 		<label for="Issued">Issued:</label><br>
 		<input type="text" name="issued" id="issued" value="IT"><br><br>
@@ -63,7 +67,7 @@
 	</div>
 
 	<div id="Ma">
-		<label for="ma">Marketing authorisation holder:</label><br>
+		<label id ="ma_label" name="ma_label" for="ma">Marketing authorisation holder:</label><br>
 		<input type="text" name="ma" id="ma" value="ORG-100030215"><br><br>
 	</div>
 
@@ -89,7 +93,7 @@
 
 	<div id="Sc">
 		<label for="sc">Date and time of test collection:</label><br>
-		<input type="datetime-local" name="sc" id="sc" value="2021-06-12T10:30"><br><br>
+		<input type="datetime-local" name="sc" id="sc" value=""><br><br>
 	</div>
 
 	<div id="Tr">
@@ -99,17 +103,17 @@
 
 	<div id="Fr">
 		<label for="fr">Date of first positive NAAT test result:</label><br>
-		<input type="date" name="fr" id="fr" value="2021-06-12"><br><br>
+		<input type="date" name="fr" id="fr" value="2021-08-01"><br><br>
 	</div>
 
 	<div id="Df">
 		<label for="df">Certificate valid from:</label><br>
-		<input type="date" name="df" id="df" value="2021-08-12"><br><br>
+		<input type="date" name="df" id="df" value="2021-08-15"><br><br>
 	</div>
 
 	<div id="Du">
 		<label for="du">Certificate valid until:</label><br>
-		<input type="tedatext" name="du" id="du" value="2022-08-12"><br><br>
+		<input type="date" name="du" id="du" value="2022-01-01"><br><br>
 	</div>
 
 	<div id="Fn">
@@ -129,7 +133,7 @@
 
 	<div id="Ver">
 		<label for="ver">Version:</label><br>
-		<input type="text" name="ver" id="ver" value="1.0.0"><br><br>
+		<input type="text" name="ver" id="ver" value="1.0.0."><br><br>
 	</div>	
 
 
