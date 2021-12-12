@@ -21,7 +21,7 @@ def sign_GP(payload_dict, kid_int):
     payload = cbor_json.cbor_from_native(payload_dict)
     kid = kid_int.to_bytes(2, 'big')
     
-    with open("./private.pem") as key_file:
+    with open("./app/certs/private.pem") as key_file:
         private_key = COSEKey.from_pem(key_file.read())
     
     # # print(vars(private_key))
@@ -32,9 +32,6 @@ def sign_GP(payload_dict, kid_int):
         EC2KpX: (private_key._x),
         EC2KpY: (private_key._y),
     }
-    # print(private_key._d.hex())
-    # print(private_key._x.hex())
-    # print(private_key._y.hex())
     cose_key = CoseKey.from_dict(cose_key)
 
     msg = Sign1Message(phdr={Algorithm: Es256, KID: kid}, uhdr={}, payload=payload)

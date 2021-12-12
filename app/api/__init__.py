@@ -6,11 +6,11 @@ from app.func import *
 
 bp = Blueprint('api', __name__)
 
-    
+HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
 YEAR_IN_SECONDS = 31557600
 
 # Given a transaction ID, return all the stats of a unique flight
-@bp.route('/sign', methods=['POST'])
+@bp.route('/sign', methods=HTTP_METHODS)
 def sign():
 
     if request.method == 'POST':
@@ -108,4 +108,4 @@ def sign():
                                 payload=base45_data
         )
     else:
-        render_template('index.html', generated=False)
+        return render_template('index.html', generated=False)
