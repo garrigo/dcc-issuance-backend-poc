@@ -14,3 +14,4 @@ base45
 cose
 cwt
 cbor_json
+ecdsa
