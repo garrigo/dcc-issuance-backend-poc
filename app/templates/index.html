@@ -11,8 +11,8 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-xs">
-					<label for="switch_field">Select the type of certificate to issue:</label><br>
-					<select class="form-control" id="switch_field">
+					<label for="switch_type">Select the type of certificate to issue:</label><br>
+					<select class="form-control" id="switch_type">
 				</div>
 
 				<div class="col-xs">
@@ -42,25 +42,52 @@
 				<input type="hidden" name="time_zone" id="time_zone" value="">
 			</div>
 
-			<div id="Issued">
+			<!-- <div id="Issued">
 				<label for="Issued">Issued:</label><br>
 				<input type="text" name="issued" id="issued" value="IT"><br><br>
+			</div> -->
+
+			<!-- <div id="Tg">
+				<label for="tg">Disease or agent targeted:</label><br>
+				<input type="form" name="tg" id="tg" value="1">COVID-19<br><br>
+			</div> -->
+			<div id="Tg">
+				<div class="col-xs">
+					<label for="tg">Disease or agent targeted:</label><br>
+					<select class="form-control" name="tg" id="tg">
+						<option value="1">COVID-19</option>
+					</select><br>
+				</div>
 			</div>
 
-			<div id="Tg">
-				<label for="tg">Disease or agent targeted:</label><br>
-				<input type="text" name="tg" id="tg" value="840539006"><br><br>
-			</div>
 
 			<div id="Mp">
-				<label for="mp">Medicinal product used:</label><br>
-				<input type="text" name="mp" id="mp" value="EU/1/20/1528"><br><br>
+				<div class="col-xs">
+					<label for="mp">Vaccine used:</label><br>
+					<select class="form-control" name="mp" id="mp">
+						<option value="1">Comirnaty</option>
+						<option value="2">Spikevax</option>
+						<option value="3">Vaxzevria</option>
+					</select><br>
+				</div>
+				<!-- <label for="mp">Medicinal product used:</label><br>
+				<input type="text" name="mp" id="mp" value="EU/1/20/1528"><br><br> -->
 			</div>
 
+
 			<div id="Ma">
+				<div class="col-xs">
+					<label for="ma">Test used:</label><br>
+					<select class="form-control" name="ma" id="ma">
+						<option value="1">NAAT</option>
+						<option value="2">RAT</option>
+					</select><br>
+				</div>
+			</div>
+				<!-- <div id="Ma">
 				<label id="ma_label" name="ma_label" for="ma">Marketing authorisation holder:</label><br>
 				<input type="text" name="ma" id="ma" value="ORG-100030215"><br><br>
-			</div>
+			</div> -->
 
 			<div id="Dn">
 				<label for="dn">Doses Done:</label><br>
@@ -77,10 +104,10 @@
 				<input type="date" name="dt" id="dt" value="2021-08-02"><br><br>
 			</div>
 
-			<div id="Tt">
+			<!-- <div id="Tt">
 				<label for="tt">Type of test:</label><br>
 				<input type="text" name="tt" id="tt" value="LP217198-3"><br><br>
-			</div>
+			</div> -->
 
 			<div id="Sc">
 				<label for="sc">Date and time of test collection:</label><br>
@@ -88,9 +115,19 @@
 			</div>
 
 			<div id="Tr">
-				<label for="tr">Result of the test:</label><br>
-				<input type="text" name="tr" id="tr" value="260415000"><br><br>
+				<div class="col-xs">
+					<label for="tr">Test used:</label><br>
+					<select class="form-control" name="tr" id="tr">
+						<option value="1">Detected</option>
+						<option value="0">Not detected</option>
+					</select><br>
+				</div>
+				<!-- <div id="Tr">
+					<label for="tr">Result of the test:</label><br>
+					<input type="text" name="tr" id="tr" value="260415000"><br><br>
+				</div> -->
 			</div>
+
 
 			<div id="Fr">
 				<label for="fr">Date of first positive NAAT test result:</label><br>
@@ -122,10 +159,10 @@
 				<input type="date" name="dob" id="dob" value="1995-05-18"><br><br>
 			</div>
 
-			<div id="Ver">
+			<!-- <div id="Ver">
 				<label for="ver">Version:</label><br>
 				<input type="text" name="ver" id="ver" value="1.0.0."><br><br>
-			</div>
+			</div> -->
 
 
 		</div>

@@ -18,20 +18,19 @@ def sign():
         dob = int(time.mktime(time.strptime(request.form['dob'], "%Y-%m-%d")))
         cert_type = request.form['type']
         
-
         if (cert_type == 'v'):
             vax_date = int(time.mktime(time.strptime(request.form['dt'], "%Y-%m-%d")))
             payload = {
                 4: today+YEAR_IN_SECONDS,
                 6: today,
-                1: request.form['issued'],
+                # 1: request.form['issued'],
                 -260: {
                     1: {
                         "v": [
                             {
-                                "tg": request.form['tg'],
-                                "mp": request.form['mp'],
-                                "ma": request.form['ma'],
+                                "tg": int(request.form['tg']),
+                                "mp": int(request.form['mp']),
+                                # "ma": request.form['ma'],
                                 "dn": int(request.form['dn']),
                                 "sd": int(request.form['sd']),
                                 # "dt": request.form['dt'],
@@ -44,26 +43,28 @@ def sign():
                             "gnt": request.form['gn'],
                             "gn": request.form['gn'],
                         },
-                        "ver": request.form['ver'],
+                        # "ver": request.form['ver'],
                         "dob": dob,
                         # "dob": request.form['dob'],
                     }
                 }
             }
-        elif (cert_type == 't'):       
+        elif (cert_type == 't'):
+            test_date = int(time.mktime(time.strptime(request.form['sc'], "%Y-%m-%dT%H:%M")))     
             payload = {
                 4: today+YEAR_IN_SECONDS,
                 6: today,
-                1: request.form['issued'],
+                # 1: request.form['issued'],
                 -260: {
                     1: {
                         "t": [
                             {
-                                "tg": request.form['tg'],
-                                "tt": request.form['tt'],
-                                "ma": request.form['ma'],
-                                "sc": request.form['sc']+":00"+request.form['time_zone'],
-                                "tr": request.form['tr'], 
+                                "tg": int(request.form['tg']),
+                                # "tt": request.form['tt'],
+                                "ma": int(request.form['ma']),
+                                # "sc": request.form['sc']+":00"+request.form['time_zone'],
+                                "sc": test_date,
+                                "tr": int(request.form['tr']), 
                             }
                         ],
                         "nam": {
@@ -72,25 +73,31 @@ def sign():
                             "gnt": request.form['gn'],
                             "gn": request.form['gn'],
                         },
-                        "ver": request.form['ver'],
+                        # "ver": request.form['ver'],
                         "dob": dob,
                         # "dob": request.form['dob'],
                     }
                 }
             }
         elif(cert_type == 'r'):
+            fr_date = int(time.mktime(time.strptime(request.form['sc'], "%Y-%m-%dT%H:%M")))     
+            df_date = int(time.mktime(time.strptime(request.form['sc'], "%Y-%m-%dT%H:%M")))    
+            du_date = int(time.mktime(time.strptime(request.form['sc'], "%Y-%m-%dT%H:%M")))    
             payload = {
                 4: today+YEAR_IN_SECONDS,
                 6: today,
-                1: request.form['issued'],
+                # 1: request.form['issued'],
                 -260: {
                     1: {
                         "r": [
                             {
-                                "tg": request.form['tg'],
-                                "fr": request.form['fr'],
-                                "df": request.form['df'],
-                                "du": request.form['du'],
+                                "tg": int(request.form['tg']),
+                                # "fr": request.form['fr'],
+                                # "df": request.form['df'],
+                                # "du": request.form['du'],
+                                "fr": fr_date,
+                                "df": df_date,
+                                "du": du_date,                                
                             }
                         ],
                         "nam": {
@@ -99,7 +106,7 @@ def sign():
                             "gnt": request.form['gn'],
                             "gn": request.form['gn'],
                         },
-                        "ver": request.form['ver'],
+                        # "ver": request.form['ver'],
                         "dob": dob,
                         # "dob": request.form['dob'],
                     }

@@ -1,10 +1,10 @@
-$("#switch_field").change(function() {
-    if ($("#switch_field").val().toString() == 'vaccine') {
+$("#switch_type").change(function() {
+    if ($("#switch_type").val().toString() == 'vaccine') {
         $('#type').val('v');
-        $('#ma_label').val('Marketing authorisation holder:');
-        $('#ma').val('ORG-100030215');
+        // $('#ma_label').val('Marketing authorisation holder:');
+        // $('#ma').val('ORG-100030215');
         $('#Mp').show();
-        $('#Ma').show();
+        $('#Ma').hide();
         $('#Dn').show();
         $('#Sd').show();
         $('#Dt').show();
@@ -16,11 +16,11 @@ $("#switch_field").change(function() {
         $('#Du').hide();  
 
     }
-	else if ($("#switch_field").val().toString() == 'test')
+	else if ($("#switch_type").val().toString() == 'test')
 	{
         $('#type').val('t');
-        $('#ma_label').val('Test device identifier:');
-        $('#ma').val('1232');
+        // $('#ma_label').val('Test device identifier:');
+        // $('#ma').val('1232');
         $('#Mp').hide();
         $('#Ma').show();
         $('#Dn').hide();
@@ -50,7 +50,7 @@ $("#switch_field").change(function() {
     
   });
   
-$("#switch_field").trigger("change");
+$("#switch_type").trigger("change");
 
 $( document ).ready(function() {
   var date = new Date();
