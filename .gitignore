@@ -1,3 +1,8 @@
 
 *.pem
 *.pyc
+server.key.org
+server.key
+server.csr
+server.crt
+*.pyc

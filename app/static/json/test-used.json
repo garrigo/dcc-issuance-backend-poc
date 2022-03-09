@@ -1,0 +1,21 @@
+{
+    "valueSetId": "covid-19-lab-test-used",
+    "valueSetDate": "2021-04-27",
+    "valueSetValues": {
+      "1": {
+        "display": "NAAT",
+        "lang": "en",
+        "active": true,
+        "version": "2.69",
+        "system": "http://loinc.org"
+      },
+      "2": {
+        "display": "RAT",
+        "lang": "en",
+        "active": true,
+        "version": "2.69",
+        "system": "http://loinc.org"
+      }
+    }
+  }
+  

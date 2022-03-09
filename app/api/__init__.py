@@ -1,6 +1,6 @@
 from datetime import date
 import time
-from flask import Blueprint, abort, request, jsonify, render_template, url_for, redirect
+from flask import Blueprint, request, render_template
 from app.func import *
 
 
@@ -8,6 +8,8 @@ bp = Blueprint('api', __name__)
 
 HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
 YEAR_IN_SECONDS = 31557600
+
+
 
 # Given a transaction ID, return all the stats of a unique flight
 @bp.route('/sign', methods=HTTP_METHODS)

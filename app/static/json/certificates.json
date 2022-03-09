@@ -1,0 +1,36 @@
+{
+	"0": {
+		"serialNumber": "3e51f824444f3e3dc6a14aef1290601c284998e7",
+		"subject": "C=AD, ST=Andorra, L=Escaldes-Engordany, O=SAAS, OU=SSII, CN=dsc",
+		"issuer": "2.5.4.97=NRTAD-U129638U, O=SAAS, CN=DGCG, C=AD",
+		"notBefore": "2021-09-05T11:57:22.000Z",
+		"notAfter": "2023-09-05T11:57:22.000Z",
+		"signatureAlgorithm": "RSASSA-PKCS1-v1_5",
+		"fingerprint": "34577628bb01486fdb7170ab01d6b37687d6e942",
+		"publicKeyAlgorithm": {
+			"hash": {
+				"name": "SHA-256"
+			},
+			"name": "ECDSA",
+			"namedCurve": "P-256"
+		},
+		"publicKeyPem": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETbMXaEjfMunKT2TUq99Gd4Ap+RjZDt/RCxDy5Rk835jY2qBvPz4fqJQ6Pscm70JlFGVn11QZ40kEnNbc/M3Ktw=="
+	},
+	"1": {
+		"serialNumber": "430152948273894fccf37672",
+		"subject": "C=AL, O=Ministria e Shendetesise dhe Mbrojtjes Sociale, OU=Production, CN=Ministria e Shendetesise dhe Mbrojtjes Sociale",
+		"issuer": "C=AL, O=NAIS, CN=NAIS Class 3 Certification Authority",
+		"notBefore": "2021-10-20T12:00:14.000Z",
+		"notAfter": "2022-10-20T12:00:14.000Z",
+		"signatureAlgorithm": "RSASSA-PKCS1-v1_5",
+		"fingerprint": "495ac38036387fce7f4eaf9fefbb86215ff7b232",
+		"publicKeyAlgorithm": {
+			"hash": {
+				"name": "SHA-256"
+			},
+			"name": "ECDSA",
+			"namedCurve": "P-256"
+		},
+		"publicKeyPem": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE0wkNj5vcpuTVE2HjY/bEcu9yXwidHFB7zgLGTATmv074zSrhNelo8x8MKQPpuN6wR8zdsuxCTJeIfLQ3jSrhYw=="
+	}
+}

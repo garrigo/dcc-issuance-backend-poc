@@ -52,7 +52,65 @@ $("#switch_type").change(function() {
   
 $("#switch_type").trigger("change");
 
+function appendOption(obj_list, select_id) {
+  var size = Object.keys(obj_list).length;
+  for (i=1; i<=size; i++){
+    $(select_id).append($('<option>', {
+      value: i,
+      text: obj_list[i]["display"]
+    }));
+  }
+}
+
 $( document ).ready(function() {
+  $.ajax({
+    type: "GET",
+    url:  "static/json/disease-agent-targeted.json",
+    contentType: "application/json",
+    dataType: "json",
+    data: JSON.stringify({
+        disease: $("#valueSetValues").val()
+    }),
+    success: function(response) {
+        appendOption(response["valueSetValues"], "#tg");
+    },
+    error: function(response) {
+        console.log(response);
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url:  "static/json/vaccine-medicinal-product.json",
+    contentType: "application/json",
+    dataType: "json",
+    data: JSON.stringify({
+        disease: $("#valueSetValues").val()
+    }),
+    success: function(response) {
+        appendOption(response["valueSetValues"], "#mp");
+    },
+    error: function(response) {
+        console.log(response);
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url:  "static/json/test-used.json",
+    contentType: "application/json",
+    dataType: "json",
+    data: JSON.stringify({
+        disease: $("#valueSetValues").val()
+    }),
+    success: function(response) {
+        appendOption(response["valueSetValues"], "#ma");
+    },
+    error: function(response) {
+        console.log(response);
+    }
+  });
+
   var date = new Date();
   date.setDate(date.getDate() - 1);
   var yesterday = date.toJSON().slice(0,10);

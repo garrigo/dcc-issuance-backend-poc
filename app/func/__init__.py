@@ -13,13 +13,14 @@ from cose.keys.keytype import KtyEC2
 from cose.keys.keyops import SignOp, VerifyOp
 
 
-from ecdsa import SigningKey, VerifyingKey
+from ecdsa import SigningKey, VerifyingKey, NIST256p
 from datetime import datetime
+import json
 
 class NeoCBOR:
     def __init__(self, payload_dict):
         #kid DA SISTEMARE
-        self.payload = (260).to_bytes(2, byteorder='big').hex()
+        self.payload = (0).to_bytes(2, byteorder='big').hex()
         #tag for number of bytes used by unix time integer
         hex_temp = (hex(payload_dict[4]))[2:]
         self.payload = self.payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
@@ -60,10 +61,10 @@ class NeoCBOR:
         elif "t" in payload_dict[-260][1]:
             #test certificate (t)
             self.payload = self.payload + (2).to_bytes(1, byteorder='big').hex()
-            #test result (tr)
-            self.payload = self.payload + (payload_dict[-260][1]["t"][0]["tr"]).to_bytes(1, byteorder='big').hex()
             #disease targeted num (tg)
             self.payload = self.payload + (payload_dict[-260][1]["t"][0]["tg"]).to_bytes(2, byteorder='big').hex()
+            #test result (tr)
+            self.payload = self.payload + (payload_dict[-260][1]["t"][0]["tr"]).to_bytes(1, byteorder='big').hex()
             #test used (ma)
             self.payload = self.payload + (payload_dict[-260][1]["t"][0]["ma"]).to_bytes(2, byteorder='big').hex()
             #date of test (sc)
@@ -92,130 +93,128 @@ class NeoCBOR:
 
 # Decode DCC
 def decode_newcose(payload):
-
     # from string to bytes -> decode base45 -> decompress with zlib
     payload = payload.encode('utf-8')
     payload = base45.b45decode(payload)
     payload = zlib.decompress(payload)
-    if payload[0]==1:
-        signature_length = 64
-        start = signature_length + 1 #65
-        kid = int.from_bytes(payload[start:start+2], "big")
-        start +=2 #67
-        byte_counter = payload[start] #4
-        start +=1 #68
-        end_cert = int.from_bytes(payload[start:start+byte_counter], "big")
+    with open('./app/static/json/algorithm.json') as f:
+        signature_gap = (json.load(f))["valueSetValues"][str(payload[0])]["signatureBytes"] + 1
+    start = signature_gap + 2 #67
+    byte_counter = payload[start] #4
+    start +=1 #68
+    end_cert = int.from_bytes(payload[start:start+byte_counter], "big")
+    start += byte_counter
+    byte_counter = payload[start]
+    start +=1
+    begin_cert = int.from_bytes(payload[start:start+byte_counter], "big")
+    start += byte_counter
+    byte_counter = payload[start]
+    start +=1
+    surname = payload[start:start+byte_counter].decode('utf-8')
+    start += byte_counter
+    byte_counter = payload[start]
+    start +=1
+    name = payload[start:start+byte_counter].decode('utf-8')
+    start += byte_counter
+    byte_counter = payload[start] #4
+    start +=1 #68
+    birth = int.from_bytes(payload[start:start+byte_counter], "big")
+    start += byte_counter
+    cert_type = payload[start]
+    start +=1 
+    disease = int.from_bytes(payload[start:start+2], "big")
+    start +=2
+    with open('./app/static/json/disease-agent-targeted.json') as f:
+        disease = (json.load(f))["valueSetValues"][str(disease)]["display"]
+    if cert_type==1:
+        vaccine = int.from_bytes(payload[start:start+2], "big")
+        with open('./app/static/json/vaccine-medicinal-product.json') as f:
+            vaccine = (json.load(f))["valueSetValues"][str(vaccine)]["display"]
+        start +=2
+        doses_done = payload[start]            
+        start +=1
+        doses_req = payload[start]
+        start +=1
+        byte_counter = payload[start]
+        start +=1
+        date_vax = int.from_bytes(payload[start:start+byte_counter], "big")
+        
+        dcc = {
+            "Begin_certificate": datetime.fromtimestamp(begin_cert).strftime('%Y-%m-%d %H:%M'), 
+            "End_certificate": datetime.fromtimestamp(end_cert).strftime('%Y-%m-%d %H:%M'),
+            "Surname": surname,
+            "Name": name,
+            "Date of birth": datetime.fromtimestamp(birth).strftime('%Y-%m-%d'),
+            "Disease Targeted": disease,
+            "Vaccine used": vaccine,
+            "Doses done": doses_done,
+            "Doses requested": doses_req,
+            "Date of vaccination": datetime.fromtimestamp(date_vax).strftime('%Y-%m-%d %H:%M'),
+        }
+    elif cert_type==2:
+        result = payload[start]
+        start +=1
+        test = int.from_bytes(payload[start:start+2], "big")
+        with open('./app/static/json/test-used.json') as f:
+            test = (json.load(f))["valueSetValues"][str(test)]["display"]
+        start +=2
+        byte_counter = payload[start]
+        start +=1
+        date_test = int.from_bytes(payload[start:start+byte_counter], "big")
+        dcc = {
+            "Begin_certificate": datetime.fromtimestamp(begin_cert).strftime('%Y-%m-%d %H:%M'), 
+            "End_certificate": datetime.fromtimestamp(end_cert).strftime('%Y-%m-%d %H:%M'),
+            "Surname": surname,
+            "Name": name,
+            "Date of birth": datetime.fromtimestamp(birth).strftime('%Y-%m-%d'),
+            "Disease Targeted": disease,
+            "Result": "Detected" if result else "Not detected",
+            "Test used": test,
+            "Date of test": datetime.fromtimestamp(date_test).strftime('%Y-%m-%d %H:%M'),
+        }
+    elif cert_type==3:
+        byte_counter = payload[start]
+        start +=1
+        date_fr = int.from_bytes(payload[start:start+byte_counter], "big")
         start += byte_counter
         byte_counter = payload[start]
         start +=1
-        begin_cert = int.from_bytes(payload[start:start+byte_counter], "big")
+        date_df = int.from_bytes(payload[start:start+byte_counter], "big")
         start += byte_counter
         byte_counter = payload[start]
         start +=1
-        surname = payload[start:start+byte_counter].decode('utf-8')
-        start += byte_counter
-        byte_counter = payload[start]
-        start +=1
-        name = payload[start:start+byte_counter].decode('utf-8')
-        start += byte_counter
-        byte_counter = payload[start] #4
-        start +=1 #68
-        birth = int.from_bytes(payload[start:start+byte_counter], "big")
-        start += byte_counter
-        if payload[start]==1:
-            start +=1 
-            disease = int.from_bytes(payload[start:start+2], "big")
-            print(payload[start:start+2])
-            start +=2
-            vaccine = int.from_bytes(payload[start:start+2], "big")
-            start +=2
-            doses_done = payload[start]
-            
-            start +=1
-            doses_req = payload[start]
-            start +=1
-            byte_counter = payload[start]
-            start +=1
-            date_vax = int.from_bytes(payload[start:start+byte_counter], "big")
-            dcc = {
-                "Begin_certificate": datetime.utcfromtimestamp(begin_cert).strftime('%Y-%m-%d %H:%M:%S'), 
-                "End_certificate": datetime.utcfromtimestamp(end_cert).strftime('%Y-%m-%d %H:%M:%S'),
-                "Surname": surname,
-                "Name": name,
-                "Date of birth": datetime.utcfromtimestamp(birth).strftime('%Y-%m-%d %H:%M:%S'),
-                "Disease Targeted": disease,
-                "Vaccine used": vaccine,
-                "Doses done": doses_done,
-                "Doses requested": doses_req,
-                "Date of vaccination": datetime.utcfromtimestamp(date_vax).strftime('%Y-%m-%d %H:%M:%S'),
-            }
-        elif payload[start]==2:
-            start +=1 
-            result = payload[start]
-            start +=1
-            disease = int.from_bytes(payload[start:start+2], "big")
-            start +=2
-            test = int.from_bytes(payload[start:start+2], "big")
-            start +=2
-            byte_counter = payload[start]
-            start +=1
-            date_test = int.from_bytes(payload[start:start+byte_counter], "big")
-            dcc = {
-                "Begin_certificate": datetime.utcfromtimestamp(begin_cert).strftime('%Y-%m-%d %H:%M:%S'), 
-                "End_certificate": datetime.utcfromtimestamp(end_cert).strftime('%Y-%m-%d %H:%M:%S'),
-                "Surname": surname,
-                "Name": name,
-                "Date of birth": datetime.utcfromtimestamp(birth).strftime('%Y-%m-%d %H:%M:%S'),
-                "Disease Targeted": disease,
-                "Result": result,
-                "Test used": test,
-                "Date of test": datetime.utcfromtimestamp(date_test).strftime('%Y-%m-%d %H:%M:%S'),
-            }
-        elif payload[start]==3:
-            start +=1 
-            disease = int.from_bytes(payload[start:start+2], "big")
-            start +=2
-            byte_counter = payload[start]
-            start +=1
-            date_fr = int.from_bytes(payload[start:start+byte_counter], "big")
-            start += byte_counter
-            byte_counter = payload[start]
-            start +=1
-            date_df = int.from_bytes(payload[start:start+byte_counter], "big")
-            start += byte_counter
-            byte_counter = payload[start]
-            start +=1
-            date_du = int.from_bytes(payload[start:start+byte_counter], "big")  
-            dcc = {
-                "Begin_certificate": datetime.utcfromtimestamp(begin_cert).strftime('%Y-%m-%d %H:%M:%S'), 
-                "End_certificate": datetime.utcfromtimestamp(end_cert).strftime('%Y-%m-%d %H:%M:%S'),
-                "Surname": surname,
-                "Name": name,
-                "Date of birth": datetime.utcfromtimestamp(birth).strftime('%Y-%m-%d %H:%M:%S'),
-                "Disease Targeted": disease,
-                "Date of first positive test": datetime.utcfromtimestamp(date_fr).strftime('%Y-%m-%d %H:%M:%S'),
-                "Date of beginning of validity": datetime.utcfromtimestamp(date_df).strftime('%Y-%m-%d %H:%M:%S'),
-                "Date of ending of validity": datetime.utcfromtimestamp(date_du).strftime('%Y-%m-%d %H:%M:%S'),
-            }
-        print(dcc)                   
+        date_du = int.from_bytes(payload[start:start+byte_counter], "big")  
+        dcc = {
+            "Begin_certificate": datetime.fromtimestamp(begin_cert).strftime('%Y-%m-%d %H:%M'), 
+            "End_certificate": datetime.fromtimestamp(end_cert).strftime('%Y-%m-%d %H:%M'),
+            "Surname": surname,
+            "Name": name,
+            "Date of birth": datetime.fromtimestamp(birth).strftime('%Y-%m-%d'),
+            "Disease Targeted": disease,
+            "Date of first positive test": datetime.fromtimestamp(date_fr).strftime('%Y-%m-%d %H:%M'),
+            "Date of beginning of validity": datetime.fromtimestamp(date_df).strftime('%Y-%m-%d %H:%M'),
+            "Date of ending of validity": datetime.fromtimestamp(date_du).strftime('%Y-%m-%d %H:%M'),
+        }
+    print(dcc)                   
     
 
 # Verify DCC signature against payload
 def verify_newcose(payload):
-    #open public key
-    with open("./app/certs/public.pem") as key_file:
-        public_key = VerifyingKey.from_pem(key_file.read())
+
     # from string to bytes -> decode base45 -> decompress with zlib
     payload = payload.encode('utf-8')
     payload = base45.b45decode(payload)
     payload = zlib.decompress(payload)
     #extract algorithm id and check length of signature
-    algo = payload[0]
-    if algo:
-        signature_length = 65
+    with open('./app/static/json/algorithm.json') as f:
+        signature_gap = (json.load(f))["valueSetValues"][str(payload[0])]["signatureBytes"] + 1
     #extract signature and payload and verify the former against the latter
-    signature = payload[1:signature_length]
-    payload = payload[signature_length:]
+    signature = payload[1:signature_gap]
+    payload = payload[signature_gap:]
+    kid = str(int.from_bytes(payload[0:2], "big"))
+    #open public key
+    with open('./app/static/json/certificates.json') as f:
+        public_key = VerifyingKey.from_pem((json.load(f))[kid]["publicKeyPem"])
     assert(public_key.verify(signature, payload))
 
 def sign_newcose(payload_dict, kid=0, algo=0):
@@ -223,7 +222,7 @@ def sign_newcose(payload_dict, kid=0, algo=0):
     with open("./app/certs/private.pem") as key_file:
         private_key = SigningKey.from_pem(key_file.read())
     #algorithm used
-    algo = bytes.fromhex('01')
+    algo = bytes.fromhex('00')
     #create neocbor structure
     neocbor = NeoCBOR(payload_dict)
     #sign neocbor bytes
@@ -242,7 +241,7 @@ def sign_newcose(payload_dict, kid=0, algo=0):
     except:
         print(False)
         return False
-    decode_newcose(base45_data)
+    # decode_newcose(base45_data)
     return base45_data
 
 
