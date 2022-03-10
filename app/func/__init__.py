@@ -13,14 +13,20 @@ from cose.keys.keytype import KtyEC2
 from cose.keys.keyops import SignOp, VerifyOp
 
 
-from ecdsa import SigningKey, VerifyingKey, NIST256p
+from ecdsa import SigningKey, VerifyingKey
 from datetime import datetime
 import json
 
+import jks #https://pypi.org/project/pyjks/
+from OpenSSL import crypto
+from cryptography import x509
+from cryptography.hazmat.primitives import serialization
+
+
 class NeoCBOR:
-    def __init__(self, payload_dict):
-        #kid DA SISTEMARE
-        self.payload = (0).to_bytes(2, byteorder='big').hex()
+    def __init__(self, payload_dict, kid):
+        #kid
+        self.payload = (kid).to_bytes(2, byteorder='big').hex()
         #tag for number of bytes used by unix time integer
         hex_temp = (hex(payload_dict[4]))[2:]
         self.payload = self.payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
@@ -200,7 +206,6 @@ def decode_newcose(payload):
 
 # Verify DCC signature against payload
 def verify_newcose(payload):
-
     # from string to bytes -> decode base45 -> decompress with zlib
     payload = payload.encode('utf-8')
     payload = base45.b45decode(payload)
@@ -212,19 +217,49 @@ def verify_newcose(payload):
     signature = payload[1:signature_gap]
     payload = payload[signature_gap:]
     kid = str(int.from_bytes(payload[0:2], "big"))
+    #open public key store
+    ks = jks.KeyStore.load('./app/certs/publicKey.jks', 'public')
+    try:
+        pk = ks.certs[kid]
+        if not pk.is_decrypted():
+            pk.decrypt('public')
+        pk_der = x509.load_der_x509_certificate(pk.cert).public_key().public_bytes(encoding=serialization.Encoding.DER,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo)
+    except:
+        print("No key found.")
+        return False
+
+    public_key = VerifyingKey.from_der(pk_der)
+
     #open public key
-    with open('./app/static/json/certificates.json') as f:
-        public_key = VerifyingKey.from_pem((json.load(f))[kid]["publicKeyPem"])
+    # with open('./app/static/json/certificates.json') as f:
+    #     public_key = VerifyingKey.from_pem((json.load(f))[kid]["publicKeyPem"])
     assert(public_key.verify(signature, payload))
 
-def sign_newcose(payload_dict, kid=0, algo=0):
-    #open private key
-    with open("./app/certs/private.pem") as key_file:
-        private_key = SigningKey.from_pem(key_file.read())
+def sign_newcose(payload_dict, kid=2, algo=0):
+    #open private key store
+    ks = jks.KeyStore.load('./app/certs/privateKey.jks', 'private')
+    try:
+        pk = ks.private_keys[str(kid)]
+        if not pk.is_decrypted():
+            pk.decrypt('private')
+        if pk.algorithm_oid == jks.util.RSA_ENCRYPTION_OID:
+            pk_der = pk.pkey
+        else:
+            pk_der = pk.pkey_pkcs8
+    except:
+        print("No key found.")
+        return False
+
+    private_key = SigningKey.from_der(pk_der)
+        
+    # with open("./app/certs/private.pem") as key_file:
+    #     private_key = SigningKey.from_pem(key_file.read())
+
     #algorithm used
-    algo = bytes.fromhex('00')
+    algo = algo.to_bytes(1, byteorder='big')
     #create neocbor structure
-    neocbor = NeoCBOR(payload_dict)
+    neocbor = NeoCBOR(payload_dict, kid)
     #sign neocbor bytes
     signature = private_key.sign(neocbor.payload)
     #concatenate algorithm id, signature and payload bytes

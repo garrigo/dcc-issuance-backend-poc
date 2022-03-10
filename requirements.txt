@@ -15,3 +15,5 @@ cose
 cwt
 cbor_json
 ecdsa
+pyjks
+cryptography

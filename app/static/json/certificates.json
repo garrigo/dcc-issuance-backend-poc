@@ -1,5 +1,5 @@
 {
-	"0": {
+	"1": {
 		"serialNumber": "3e51f824444f3e3dc6a14aef1290601c284998e7",
 		"subject": "C=AD, ST=Andorra, L=Escaldes-Engordany, O=SAAS, OU=SSII, CN=dsc",
 		"issuer": "2.5.4.97=NRTAD-U129638U, O=SAAS, CN=DGCG, C=AD",
@@ -16,7 +16,7 @@
 		},
 		"publicKeyPem": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETbMXaEjfMunKT2TUq99Gd4Ap+RjZDt/RCxDy5Rk835jY2qBvPz4fqJQ6Pscm70JlFGVn11QZ40kEnNbc/M3Ktw=="
 	},
-	"1": {
+	"2": {
 		"serialNumber": "430152948273894fccf37672",
 		"subject": "C=AL, O=Ministria e Shendetesise dhe Mbrojtjes Sociale, OU=Production, CN=Ministria e Shendetesise dhe Mbrojtjes Sociale",
 		"issuer": "C=AL, O=NAIS, CN=NAIS Class 3 Certification Authority",

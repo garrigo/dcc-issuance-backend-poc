@@ -117,7 +117,7 @@ def sign():
         else:
             render_template('index.html', generated=False)
 
-        base45_data = sign_newcose(payload, 0)
+        base45_data = sign_newcose(payload)
 
         return render_template('index.html',
                                 generated=True,
