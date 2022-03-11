@@ -22,6 +22,17 @@ from cryptography import x509
 from cryptography.hazmat.primitives import serialization
 import os
 
+ks = jks.KeyStore.load('./app/certs/publicKey.jks', 'public')
+
+pk = ks.certs["1"]
+if not pk.is_decrypted():
+    pk.decrypt('public')
+print((x509.load_der_x509_certificate(pk.cert)).fingerprint())
+pk_der = x509.load_der_x509_certificate(pk.cert).public_key().public_bytes(encoding=serialization.Encoding.DER,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo)
+
+public_key = VerifyingKey.from_der(pk_der)
+
 class NeoCBOR:
     def __init__(self, payload_dict, kid):
         #kid
@@ -217,19 +228,19 @@ def verify_newcose(payload):
     payload = payload[signature_gap:]
     kid = str(int.from_bytes(payload[0:2], "big"))
     #open public key store
-    ks = jks.KeyStore.load('./app/certs/publicKey.jks', 'public')
+    # ks = jks.KeyStore.load('./app/certs/publicKey.jks', 'public')
 
-    pk = ks.certs[kid]
-    if not pk.is_decrypted():
-        pk.decrypt('public')
-    pk_der = x509.load_der_x509_certificate(pk.cert).public_key().public_bytes(encoding=serialization.Encoding.DER,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo)
+    # pk = ks.certs[kid]
+    # if not pk.is_decrypted():
+    #     pk.decrypt('public')
+    # pk_der = x509.load_der_x509_certificate(pk.cert).public_key().public_bytes(encoding=serialization.Encoding.DER,
+    #         format=serialization.PublicFormat.SubjectPublicKeyInfo)
 
-    public_key = VerifyingKey.from_der(pk_der)
+    # public_key = VerifyingKey.from_der(pk_der)
 
     #open public key
-    # with open('./app/static/json/certificates.json') as f:
-    #     public_key = VerifyingKey.from_pem((json.load(f))[kid]["publicKeyPem"])
+    with open('./app/static/json/certificates.json') as f:
+        public_key = VerifyingKey.from_pem((json.load(f))[kid]["publicKeyPem"])
     assert(public_key.verify(signature, payload))
 
 def sign_newcose(payload_dict, kid=1, algo=0):
@@ -268,13 +279,14 @@ def sign_newcose(payload_dict, kid=1, algo=0):
         # decode_newcose(base45_data)
         return base45_data
     except Exception as e:
-        print("ERROR :" + str(e))
+        print("ERROR: " + str(e))
         return False
     
     
 
 
-    
+
+
 
 def sign_GP(payload_dict, kid_int):
 

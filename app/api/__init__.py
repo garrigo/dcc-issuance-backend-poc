@@ -9,6 +9,18 @@ bp = Blueprint('api', __name__)
 HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
 YEAR_IN_SECONDS = 31557600
 
+@bp.route('/trustList', methods=['GET'])
+def trustList():
+    try:
+        if request.method == 'GET':
+            with open('./app/static/json/certificates.json', 'r') as f:
+                data = json.load(f)
+            return data
+        else:
+            return render_template('index.html', generated=False)
+    except Exception as e:
+        print(str(e))
+        return render_template('index.html', generated=False)
 
 
 # Given a transaction ID, return all the stats of a unique flight
@@ -118,9 +130,12 @@ def sign():
             render_template('index.html', generated=False)
 
         base45_data = sign_newcose(payload)
-
+        if base45_data:
+            generated = 1
+        else:
+            generated = 0
         return render_template('index.html',
-                                generated=True,
+                                generated=generated,
                                 payload=base45_data
         )
     else:

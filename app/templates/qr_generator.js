@@ -1,6 +1,6 @@
 $( document ).ready(function() {
     var page = '{{generated}}'
-    if (page){
+    if (page==="1"){
         var payload='{{payload}}';
         var qrString = String(payload);
 
@@ -35,6 +35,12 @@ $( document ).ready(function() {
         // append qr rectangle to page and show download and signature verification buttons
         qrCode.append(document.getElementById('qrcode-canvas'));
         document.getElementById('download').style.display = "block"; 
+    }
+    else{
+        // show error message
+        document.getElementById('error-msg').className = "alert alert-danger";
+        document.getElementById('error-msg').innerHTML = "An internal error has occurred.";
+
     }
 
 });
