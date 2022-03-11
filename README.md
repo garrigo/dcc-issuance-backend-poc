@@ -1,4 +1,4 @@
-# Green Pass QR Issuance Backend
+# DCC QR Issuance Backend
 
 ---
 

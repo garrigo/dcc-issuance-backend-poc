@@ -18,10 +18,9 @@ from datetime import datetime
 import json
 
 import jks #https://pypi.org/project/pyjks/
-from OpenSSL import crypto
 from cryptography import x509
 from cryptography.hazmat.primitives import serialization
-
+import os
 
 class NeoCBOR:
     def __init__(self, payload_dict, kid):
@@ -219,15 +218,12 @@ def verify_newcose(payload):
     kid = str(int.from_bytes(payload[0:2], "big"))
     #open public key store
     ks = jks.KeyStore.load('./app/certs/publicKey.jks', 'public')
-    try:
-        pk = ks.certs[kid]
-        if not pk.is_decrypted():
-            pk.decrypt('public')
-        pk_der = x509.load_der_x509_certificate(pk.cert).public_key().public_bytes(encoding=serialization.Encoding.DER,
-                format=serialization.PublicFormat.SubjectPublicKeyInfo)
-    except:
-        print("No key found.")
-        return False
+
+    pk = ks.certs[kid]
+    if not pk.is_decrypted():
+        pk.decrypt('public')
+    pk_der = x509.load_der_x509_certificate(pk.cert).public_key().public_bytes(encoding=serialization.Encoding.DER,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo)
 
     public_key = VerifyingKey.from_der(pk_der)
 
@@ -236,10 +232,10 @@ def verify_newcose(payload):
     #     public_key = VerifyingKey.from_pem((json.load(f))[kid]["publicKeyPem"])
     assert(public_key.verify(signature, payload))
 
-def sign_newcose(payload_dict, kid=2, algo=0):
-    #open private key store
-    ks = jks.KeyStore.load('./app/certs/privateKey.jks', 'private')
+def sign_newcose(payload_dict, kid=1, algo=0):
     try:
+        #open private key store
+        ks = jks.KeyStore.load('./app/certs/privateKey.jks', 'private')
         pk = ks.private_keys[str(kid)]
         if not pk.is_decrypted():
             pk.decrypt('private')
@@ -247,37 +243,35 @@ def sign_newcose(payload_dict, kid=2, algo=0):
             pk_der = pk.pkey
         else:
             pk_der = pk.pkey_pkcs8
-    except:
-        print("No key found.")
-        return False
 
-    private_key = SigningKey.from_der(pk_der)
-        
-    # with open("./app/certs/private.pem") as key_file:
-    #     private_key = SigningKey.from_pem(key_file.read())
+        private_key = SigningKey.from_der(pk_der)
+            
+        # with open("./app/certs/private.pem") as key_file:
+        #     private_key = SigningKey.from_pem(key_file.read())
 
-    #algorithm used
-    algo = algo.to_bytes(1, byteorder='big')
-    #create neocbor structure
-    neocbor = NeoCBOR(payload_dict, kid)
-    #sign neocbor bytes
-    signature = private_key.sign(neocbor.payload)
-    #concatenate algorithm id, signature and payload bytes
-    full_payload = algo + signature + neocbor.payload
-    # print(len(full_payload))
-    #compress full payload with zlib -> encode in base45 -> from bytes to string for the qr code creation
-    zlib_data = zlib.compress(full_payload)
-    base45_data = base45.b45encode(zlib_data)
-    base45_data = base45_data.decode('utf-8')
-    # print(len(base45_data))
-    #check if generated signature is correct
-    try:
+        #algorithm used
+        algo = algo.to_bytes(1, byteorder='big')
+        #create neocbor structure
+        neocbor = NeoCBOR(payload_dict, kid)
+        #sign neocbor bytes
+        signature = private_key.sign(neocbor.payload)
+        #concatenate algorithm id, signature and payload bytes
+        full_payload = algo + signature + neocbor.payload
+        # print(len(full_payload))
+        #compress full payload with zlib -> encode in base45 -> from bytes to string for the qr code creation
+        zlib_data = zlib.compress(full_payload)
+        base45_data = base45.b45encode(zlib_data)
+        base45_data = base45_data.decode('utf-8')
+        # print(len(base45_data))
+        #check if generated signature is correct
         verify_newcose(base45_data)
-    except:
-        print(False)
+        # decode_newcose(base45_data)
+        return base45_data
+    except Exception as e:
+        print("ERROR :" + str(e))
         return False
-    # decode_newcose(base45_data)
-    return base45_data
+    
+    
 
 
     

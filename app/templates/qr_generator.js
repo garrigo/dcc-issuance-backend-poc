@@ -41,5 +41,5 @@ $( document ).ready(function() {
 // on-click listener for the download button
 document.getElementById('download').addEventListener('click', function() {
     // download generated image as jpg with a random name
-    qrCode.download({ name: "Green Pass", extension: "jpeg"});
+    qrCode.download({ name: "DCC", extension: "jpeg"});
 }, false);
