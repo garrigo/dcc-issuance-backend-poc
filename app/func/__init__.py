@@ -19,19 +19,41 @@ import json
 
 import jks #https://pypi.org/project/pyjks/
 from cryptography import x509
-from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import serialization, hashes
 import os
 
-ks = jks.KeyStore.load('./app/certs/publicKey.jks', 'public')
 
-pk = ks.certs["1"]
-if not pk.is_decrypted():
-    pk.decrypt('public')
-print((x509.load_der_x509_certificate(pk.cert)).fingerprint())
-pk_der = x509.load_der_x509_certificate(pk.cert).public_key().public_bytes(encoding=serialization.Encoding.DER,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo)
+def public_certs():
+    ks = jks.KeyStore.load('./app/certs/publicKey.jks', 'public')
+    # with open ("app/static/json/entries")
+    for alias, c in ks.certs.items():
+        pk = ks.certs[alias]
+        if not pk.is_decrypted():
+            pk.decrypt('public')
+        cert = x509.load_der_x509_certificate(pk.cert)
+        fingerprint = cert.fingerprint(hashes.SHA256()).hex() 
+        serial_number = cert.serial_number 
+        not_before = str(cert.not_valid_before) 
+        not_after = str(cert.not_valid_after) 
+        issuer = (str(cert.issuer))[6:-2] 
+        subject = (str(cert.subject))[6:-2] 
 
-public_key = VerifyingKey.from_der(pk_der)
+        publicKeyPem = cert.public_key().public_bytes(encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo)[27:-26]
+
+
+        with open("app/static/json/certificates.json", "r") as f:
+            data = json.load(f)
+            data[alias] = {"serialNumber": serial_number,
+                        "subject": subject,
+                        "issuer": issuer,
+                        "notBefore":not_before,
+                        "not_after":not_after,
+                        "fingerprint":fingerprint,
+                        "publicKeyPem":publicKeyPem.decode('utf-8')}
+        with open("app/static/json/certificates.json", "w") as f:
+            json.dump(data, f, indent=4)
+
 
 class NeoCBOR:
     def __init__(self, payload_dict, kid):
@@ -243,7 +265,7 @@ def verify_newcose(payload):
         public_key = VerifyingKey.from_pem((json.load(f))[kid]["publicKeyPem"])
     assert(public_key.verify(signature, payload))
 
-def sign_newcose(payload_dict, kid=1, algo=0):
+def sign_newcose(payload_dict, kid=2, algo=0):
     try:
         #open private key store
         ks = jks.KeyStore.load('./app/certs/privateKey.jks', 'private')

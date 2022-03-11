@@ -1,36 +1,20 @@
 {
-	"1": {
-		"serialNumber": "3e51f824444f3e3dc6a14aef1290601c284998e7",
-		"subject": "C=AD, ST=Andorra, L=Escaldes-Engordany, O=SAAS, OU=SSII, CN=dsc",
-		"issuer": "2.5.4.97=NRTAD-U129638U, O=SAAS, CN=DGCG, C=AD",
-		"notBefore": "2021-09-05T11:57:22.000Z",
-		"notAfter": "2023-09-05T11:57:22.000Z",
-		"signatureAlgorithm": "RSASSA-PKCS1-v1_5",
-		"fingerprint": "34577628bb01486fdb7170ab01d6b37687d6e942",
-		"publicKeyAlgorithm": {
-			"hash": {
-				"name": "SHA-256"
-			},
-			"name": "ECDSA",
-			"namedCurve": "P-256"
-		},
-		"publicKeyPem": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETbMXaEjfMunKT2TUq99Gd4Ap+RjZDt/RCxDy5Rk835jY2qBvPz4fqJQ6Pscm70JlFGVn11QZ40kEnNbc/M3Ktw=="
-	},
-	"2": {
-		"serialNumber": "430152948273894fccf37672",
-		"subject": "C=AL, O=Ministria e Shendetesise dhe Mbrojtjes Sociale, OU=Production, CN=Ministria e Shendetesise dhe Mbrojtjes Sociale",
-		"issuer": "C=AL, O=NAIS, CN=NAIS Class 3 Certification Authority",
-		"notBefore": "2021-10-20T12:00:14.000Z",
-		"notAfter": "2022-10-20T12:00:14.000Z",
-		"signatureAlgorithm": "RSASSA-PKCS1-v1_5",
-		"fingerprint": "495ac38036387fce7f4eaf9fefbb86215ff7b232",
-		"publicKeyAlgorithm": {
-			"hash": {
-				"name": "SHA-256"
-			},
-			"name": "ECDSA",
-			"namedCurve": "P-256"
-		},
-		"publicKeyPem": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE0wkNj5vcpuTVE2HjY/bEcu9yXwidHFB7zgLGTATmv074zSrhNelo8x8MKQPpuN6wR8zdsuxCTJeIfLQ3jSrhYw=="
-	}
+    "1": {
+        "serialNumber": 728761719339543498771839790986566291524307336500,
+        "subject": "C=IT,ST=Italy,L=Maggica Roma,O=Er pupone,OU=Pupone,CN=Ilary",
+        "issuer": "C=IT,ST=Italy,L=Maggica Roma,O=Er pupone,OU=Pupone,CN=Ilary",
+        "notBefore": "2021-12-01 14:09:40",
+        "not_after": "2021-12-31 14:09:40",
+        "fingerprint": "49977bf5f4b79d634749499061e7c79cb3217fc112aae6540f36a2cf7e51bb28",
+        "publicKeyPem": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAETbMXaEjfMunKT2TUq99Gd4Ap+RjZ\nDt/RCxDy5Rk835jY2qBvPz4fqJQ6Pscm70JlFGVn11QZ40kEnNbc/M3Ktw=="
+    },
+    "2": {
+        "serialNumber": 456652048722200177551091643610885440073471122905,
+        "subject": "C=IT,ST=Italy,L=Venice,O=Internet Widgits Pty Ltd",
+        "issuer": "C=IT,ST=Italy,L=Venice,O=Internet Widgits Pty Ltd",
+        "notBefore": "2022-03-10 18:09:13",
+        "not_after": "2023-03-10 18:09:13",
+        "fingerprint": "5fe455714e46a11c84b8141098790845d27388aa30db593e3e6590aa8668c7fb",
+        "publicKeyPem": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEbHoqDeFIe/mFI3i0atXbq+zYimlC\nyyBa98laZjHLJ33s5ZUbh2KqLhqE77ZO+jqJJfr+S3m7s4gSoBVWLyJDWA=="
+    }
 }

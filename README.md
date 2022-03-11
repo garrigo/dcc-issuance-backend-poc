@@ -8,9 +8,9 @@
 - Install JAVA and use `keytool -importcert -alias dgcg_trust_anchor -file cert_ta.pem -keystore ta.jks -storepass dgcg-p4ssw0rd`
 -` openssl ecparam -genkey -name prime256v1 -out private_key.pem` to generate new private key ecdsa p256    
 - `openssl req -new -key private_key.pem -x509 -nodes -days 365 -out cert.pem` to use the private key to generate certificate
-- `keytool -import -alias x -file certx.pem -keystore publicKey.jks` to export certificate to javakeystore
-- `openssl pkcs12 -export -in cert.pem -inkey private.pem -out bundle_1.p12` to export private+certificate to other bundle
-- `keytool -importkeystore -deststorepass private -destkeystore privateKey.jks -srckeystore bundle_1.p12 -srcstoretype PKCS12` to import to jks
+- `keytool -import -alias x -file certx.pem -keystore publicKey.jks` to export certificate to public javakeystore (trust store)
+- `openssl pkcs12 -export -in cert.pem -inkey private_key.pem -out bundle.p12` to export private+certificate to other bundle (key store)
+- `keytool -importkeystore -deststorepass private -destkeystore private_key.jks -srckeystore bundle.p12 -srcstoretype PKCS12` to import to jks
 
 
 ## Using terminal
