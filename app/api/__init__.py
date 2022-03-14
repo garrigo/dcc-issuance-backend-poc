@@ -9,7 +9,7 @@ bp = Blueprint('api', __name__)
 HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
 YEAR_IN_SECONDS = 31557600
 
-@bp.route('/trustList', methods=['GET'])
+@bp.route('/certificates', methods=['GET'])
 def trustList():
     try:
         if request.method == 'GET':
@@ -19,7 +19,6 @@ def trustList():
         else:
             return render_template('index.html', generated=False)
     except Exception as e:
-        print(str(e))
         return render_template('index.html', generated=False)
 
 

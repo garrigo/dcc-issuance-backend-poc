@@ -14,6 +14,7 @@ from cose.keys.keyops import SignOp, VerifyOp
 
 
 from ecdsa import SigningKey, VerifyingKey
+import hashlib
 from datetime import datetime
 import json
 
@@ -263,7 +264,7 @@ def verify_newcose(payload):
     #open public key
     with open('./app/static/json/certificates.json') as f:
         public_key = VerifyingKey.from_pem((json.load(f))[kid]["publicKeyPem"])
-    assert(public_key.verify(signature, payload))
+    assert(public_key.verify(signature, payload,  hashfunc=hashlib.sha256))
 
 def sign_newcose(payload_dict, kid=2, algo=0):
     try:
@@ -287,7 +288,7 @@ def sign_newcose(payload_dict, kid=2, algo=0):
         #create neocbor structure
         neocbor = NeoCBOR(payload_dict, kid)
         #sign neocbor bytes
-        signature = private_key.sign(neocbor.payload)
+        signature = private_key.sign(neocbor.payload, hashfunc=hashlib.sha256)
         #concatenate algorithm id, signature and payload bytes
         full_payload = algo + signature + neocbor.payload
         # print(len(full_payload))
