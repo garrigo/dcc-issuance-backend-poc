@@ -3,7 +3,7 @@
 ---
 
 ## How to test 
-- Create key-pair in app/certs/SSL/ as in https://kracekumar.com/post/54437887454/ssl-for-flask-local-development/ but using at least 2048 bits for RSA
+- Create CA and key-pair in app/certs/SSL/ as in https://scriptcrunch.com/create-ca-tls-ssl-certificates-keys/
 - Generate a key-pair `openssl req -x509 -newkey rsa:4096 -keyout key_ta.pem -out cert_ta.pem -days 365 -nodes` in app/certs/TrustAnchor/
 - Install JAVA and use `keytool -importcert -alias dgcg_trust_anchor -file cert_ta.pem -keystore ta.jks -storepass dgcg-p4ssw0rd`
 -` openssl ecparam -genkey -name prime256v1 -out private_key.pem` to generate new private key ecdsa p256    

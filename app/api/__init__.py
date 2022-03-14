@@ -9,19 +9,6 @@ bp = Blueprint('api', __name__)
 HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
 YEAR_IN_SECONDS = 31557600
 
-@bp.route('/certificates', methods=['GET'])
-def trustList():
-    try:
-        if request.method == 'GET':
-            with open('./app/static/json/certificates.json', 'r') as f:
-                data = json.load(f)
-            return data
-        else:
-            return render_template('index.html', generated=False)
-    except Exception as e:
-        return render_template('index.html', generated=False)
-
-
 # Given a transaction ID, return all the stats of a unique flight
 @bp.route('/sign', methods=HTTP_METHODS)
 def sign():
@@ -138,4 +125,65 @@ def sign():
                                 payload=base45_data
         )
     else:
+        return render_template('index.html', generated=False)
+
+@bp.route('/certificateList', methods=['GET'])
+def certificateList():
+    try:
+        if request.method == 'GET':
+            with open('./app/static/json/certificates.json', 'r') as f:
+                data = json.load(f)
+            return data
+        else:
+            return render_template('index.html', generated=False)
+    except Exception as e:
+        return render_template('index.html', generated=False)
+
+@bp.route('/vaccineList', methods=['GET'])
+def vaccineList():
+    try:
+        if request.method == 'GET':
+            with open('./app/static/json/vaccine-medicinal-product.json', 'r') as f:
+                data = json.load(f)
+            return data
+        else:
+            return render_template('index.html', generated=False)
+    except Exception as e:
+        return render_template('index.html', generated=False)
+
+@bp.route('/testList', methods=['GET'])
+def testList():
+    try:
+        if request.method == 'GET':
+            with open('./app/static/json/test-used.json', 'r') as f:
+                data = json.load(f)
+            return data
+        else:
+            return render_template('index.html', generated=False)
+    except Exception as e:
+        return render_template('index.html', generated=False)
+
+@bp.route('/diseaseList', methods=['GET'])
+def diseaseList():
+    try:
+        if request.method == 'GET':
+            with open('./app/static/json/disease-agent-targeted.json', 'r') as f:
+                data = json.load(f)
+            return data
+        else:
+            return render_template('index.html', generated=False)
+    except Exception as e:
+        return render_template('index.html', generated=False)
+
+
+@bp.route('/algorithmList', methods=['GET'])
+def algorithmList():
+    try:
+        if request.method == 'GET':
+            with open('./app/static/json/algorithm.json', 'r') as f:
+                data = json.load(f)
+            return data
+        else:
+            return render_template('index.html', generated=False)
+    except Exception as e:
         return render_template('index.html', generated=False)
