@@ -1,10 +1,11 @@
-from datetime import date
+from datetime import date, datetime
 import time
 from flask import Blueprint, request, render_template
 from app.func import *
 
 
 bp = Blueprint('api', __name__)
+
 
 HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
 YEAR_IN_SECONDS = 31557600
@@ -14,12 +15,15 @@ YEAR_IN_SECONDS = 31557600
 def sign():
 
     if request.method == 'POST':
+        dob = int(time.mktime(time.strptime(request.form['dob'], "%Y-%m-%d"))) 
+        offset = int((datetime.fromtimestamp(dob) -datetime.utcfromtimestamp(dob)).total_seconds())
+        dob += offset
         today = int(time.mktime(time.strptime(str(date.today()), "%Y-%m-%d")))
-        dob = int(time.mktime(time.strptime(request.form['dob'], "%Y-%m-%d")))
+        offset = int((datetime.fromtimestamp(today) -datetime.utcfromtimestamp(today)).total_seconds())
+        today += offset
         cert_type = request.form['type']
-        
         if (cert_type == 'v'):
-            vax_date = int(time.mktime(time.strptime(request.form['dt'], "%Y-%m-%d")))
+            vax_date = int(time.mktime(time.strptime(request.form['dt'], "%Y-%m-%d"))) + offset
             payload = {
                 4: today+YEAR_IN_SECONDS,
                 6: today,
@@ -50,7 +54,7 @@ def sign():
                 }
             }
         elif (cert_type == 't'):
-            test_date = int(time.mktime(time.strptime(request.form['sc'], "%Y-%m-%dT%H:%M")))     
+            test_date = int(time.mktime(time.strptime(request.form['sc'], "%Y-%m-%dT%H:%M"))) + offset
             payload = {
                 4: today+YEAR_IN_SECONDS,
                 6: today,
@@ -80,9 +84,9 @@ def sign():
                 }
             }
         elif(cert_type == 'r'):
-            fr_date = int(time.mktime(time.strptime(request.form['sc'], "%Y-%m-%dT%H:%M")))     
-            df_date = int(time.mktime(time.strptime(request.form['sc'], "%Y-%m-%dT%H:%M")))    
-            du_date = int(time.mktime(time.strptime(request.form['sc'], "%Y-%m-%dT%H:%M")))    
+            fr_date = int(time.mktime(time.strptime(request.form['fr'], "%Y-%m-%d"))) + offset
+            df_date = int(time.mktime(time.strptime(request.form['df'], "%Y-%m-%d"))) + offset
+            du_date = int(time.mktime(time.strptime(request.form['du'], "%Y-%m-%d"))) + offset
             payload = {
                 4: today+YEAR_IN_SECONDS,
                 6: today,

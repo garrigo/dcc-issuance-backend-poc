@@ -179,16 +179,16 @@ def decode_newcose(payload):
         date_vax = int.from_bytes(payload[start:start+byte_counter], "big")
         
         dcc = {
-            "Begin_certificate": datetime.fromtimestamp(begin_cert).strftime('%Y-%m-%d %H:%M'), 
-            "End_certificate": datetime.fromtimestamp(end_cert).strftime('%Y-%m-%d %H:%M'),
+            "Begin_certificate": datetime.utcfromtimestamp(begin_cert).strftime('%Y-%m-%d %H:%M'), 
+            "End_certificate": datetime.utcfromtimestamp(end_cert).strftime('%Y-%m-%d %H:%M'),
             "Surname": surname,
             "Name": name,
-            "Date of birth": datetime.fromtimestamp(birth).strftime('%Y-%m-%d'),
+            "Date of birth": datetime.utcfromtimestamp(birth).strftime('%Y-%m-%d'),
             "Disease Targeted": disease,
             "Vaccine used": vaccine,
             "Doses done": doses_done,
             "Doses requested": doses_req,
-            "Date of vaccination": datetime.fromtimestamp(date_vax).strftime('%Y-%m-%d %H:%M'),
+            "Date of vaccination": datetime.utcfromtimestamp(date_vax).strftime('%Y-%m-%d %H:%M'),
         }
     elif cert_type==2:
         result = payload[start]
@@ -201,15 +201,15 @@ def decode_newcose(payload):
         start +=1
         date_test = int.from_bytes(payload[start:start+byte_counter], "big")
         dcc = {
-            "Begin_certificate": datetime.fromtimestamp(begin_cert).strftime('%Y-%m-%d %H:%M'), 
-            "End_certificate": datetime.fromtimestamp(end_cert).strftime('%Y-%m-%d %H:%M'),
+            "Begin_certificate": datetime.utcfromtimestamp(begin_cert).strftime('%Y-%m-%d %H:%M'), 
+            "End_certificate": datetime.utcfromtimestamp(end_cert).strftime('%Y-%m-%d %H:%M'),
             "Surname": surname,
             "Name": name,
-            "Date of birth": datetime.fromtimestamp(birth).strftime('%Y-%m-%d'),
+            "Date of birth": datetime.utcfromtimestamp(birth).strftime('%Y-%m-%d'),
             "Disease Targeted": disease,
             "Result": "Detected" if result else "Not detected",
             "Test used": test,
-            "Date of test": datetime.fromtimestamp(date_test).strftime('%Y-%m-%d %H:%M'),
+            "Date of test": datetime.utcfromtimestamp(date_test).strftime('%Y-%m-%d %H:%M'),
         }
     elif cert_type==3:
         byte_counter = payload[start]
@@ -224,15 +224,15 @@ def decode_newcose(payload):
         start +=1
         date_du = int.from_bytes(payload[start:start+byte_counter], "big")  
         dcc = {
-            "Begin_certificate": datetime.fromtimestamp(begin_cert).strftime('%Y-%m-%d %H:%M'), 
-            "End_certificate": datetime.fromtimestamp(end_cert).strftime('%Y-%m-%d %H:%M'),
+            "Begin_certificate": datetime.utcfromtimestamp(begin_cert).strftime('%Y-%m-%d %H:%M'), 
+            "End_certificate": datetime.utcfromtimestamp(end_cert).strftime('%Y-%m-%d %H:%M'),
             "Surname": surname,
             "Name": name,
-            "Date of birth": datetime.fromtimestamp(birth).strftime('%Y-%m-%d'),
+            "Date of birth": datetime.utcfromtimestamp(birth).strftime('%Y-%m-%d'),
             "Disease Targeted": disease,
-            "Date of first positive test": datetime.fromtimestamp(date_fr).strftime('%Y-%m-%d %H:%M'),
-            "Date of beginning of validity": datetime.fromtimestamp(date_df).strftime('%Y-%m-%d %H:%M'),
-            "Date of ending of validity": datetime.fromtimestamp(date_du).strftime('%Y-%m-%d %H:%M'),
+            "Date of first positive test": datetime.utcfromtimestamp(date_fr).strftime('%Y-%m-%d %H:%M'),
+            "Date of beginning of validity": datetime.utcfromtimestamp(date_df).strftime('%Y-%m-%d %H:%M'),
+            "Date of ending of validity": datetime.utcfromtimestamp(date_du).strftime('%Y-%m-%d %H:%M'),
         }
     print(dcc)                   
     
@@ -296,10 +296,11 @@ def sign_newcose(payload_dict, kid=2, algo=0):
         zlib_data = zlib.compress(full_payload)
         base45_data = base45.b45encode(zlib_data)
         base45_data = base45_data.decode('utf-8')
+        print(base45_data)
         # print(len(base45_data))
         #check if generated signature is correct
         verify_newcose(base45_data)
-        # decode_newcose(base45_data)
+        decode_newcose(base45_data)
         return base45_data
     except Exception as e:
         print("ERROR: " + str(e))

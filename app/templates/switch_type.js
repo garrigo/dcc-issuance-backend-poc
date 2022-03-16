@@ -110,11 +110,11 @@ $( document ).ready(function() {
         console.log(response);
     }
   });
-
   var date = new Date();
   date.setDate(date.getDate() - 1);
-  var yesterday = date.toJSON().slice(0,10);
-  $('#sc').val(yesterday+"T23:59");
+  var yesterdayDate = date.toISOString().substring(0,10);
+  var yesterdayTime = date.toISOString().substring(11,16);
+  $('#sc').val(yesterdayDate + 'T' + yesterdayTime);
   offset = (new Date().getTimezoneOffset())/-60;
   time_zone = String(offset).padStart(2, '0');
   if(offset >= 0)
