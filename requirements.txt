@@ -17,4 +17,4 @@ cose
 cwt
 cbor_json
 ecdsa
-pyjks
+rsa

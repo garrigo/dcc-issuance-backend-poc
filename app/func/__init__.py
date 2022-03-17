@@ -21,16 +21,15 @@ import json
 import jks #https://pypi.org/project/pyjks/
 from cryptography import x509
 from cryptography.hazmat.primitives import serialization, hashes
-import os
+import rsa
 
-
-def public_certs():
-    ks = jks.KeyStore.load('./app/certs/publicKey.jks', 'public')
-    # with open ("app/static/json/entries")
+def add_storedKeys(store_path, psw):
+    ks = jks.KeyStore.load(store_path, psw)
+    keys = {}
     for alias, c in ks.certs.items():
         pk = ks.certs[alias]
         if not pk.is_decrypted():
-            pk.decrypt('public')
+            pk.decrypt(psw)
         cert = x509.load_der_x509_certificate(pk.cert)
         fingerprint = cert.fingerprint(hashes.SHA256()).hex() 
         serial_number = cert.serial_number 
@@ -41,20 +40,22 @@ def public_certs():
 
         publicKeyPem = cert.public_key().public_bytes(encoding=serialization.Encoding.PEM,
                 format=serialization.PublicFormat.SubjectPublicKeyInfo)[27:-26]
-
-
-        with open("app/static/json/certificates.json", "r") as f:
-            data = json.load(f)
-            data[alias] = {"serialNumber": serial_number,
+        keys[alias] = {"serialNumber": serial_number,
                         "subject": subject,
                         "issuer": issuer,
                         "notBefore":not_before,
                         "not_after":not_after,
                         "fingerprint":fingerprint,
                         "publicKeyPem":publicKeyPem.decode('utf-8')}
-        with open("app/static/json/certificates.json", "w") as f:
-            json.dump(data, f, indent=4)
+    return keys
+def public_certs():
+    keys = {}
+    keys["ECDSA"] = add_storedKeys('./app/certs/publicKeyES.jks', 'public')
+    keys["RSA"] = add_storedKeys('./app/certs/publicKeyRSA.jks', 'public')
+    with open("app/static/json/certificates.json", "w") as f:
+        json.dump(keys, f, indent=4)
 
+public_certs()
 
 class NeoCBOR:
     def __init__(self, payload_dict, kid):
@@ -244,33 +245,46 @@ def verify_newcose(payload):
     payload = base45.b45decode(payload)
     payload = zlib.decompress(payload)
     #extract algorithm id and check length of signature
+    algo = payload[0]
     with open('./app/static/json/algorithm.json') as f:
-        signature_gap = (json.load(f))["valueSetValues"][str(payload[0])]["signatureBytes"] + 1
+        signature_gap = (json.load(f))["valueSetValues"][str(algo)]["signatureBytes"] + 1
     #extract signature and payload and verify the former against the latter
     signature = payload[1:signature_gap]
     payload = payload[signature_gap:]
     kid = str(int.from_bytes(payload[0:2], "big"))
     #open public key store
-    # ks = jks.KeyStore.load('./app/certs/publicKey.jks', 'public')
+    if algo == 0:
+        algo_name = "ECDSA"
+        # ks = jks.KeyStore.load('./app/certs/publicKeyES.jks', 'public')
+    elif algo == 1:
+        algo_name = "RSA"
+        # ks = jks.KeyStore.load('./app/certs/publicKeyRSA.jks', 'public')
 
     # pk = ks.certs[kid]
     # if not pk.is_decrypted():
     #     pk.decrypt('public')
+
     # pk_der = x509.load_der_x509_certificate(pk.cert).public_key().public_bytes(encoding=serialization.Encoding.DER,
     #         format=serialization.PublicFormat.SubjectPublicKeyInfo)
+    if algo == 0:
+        #open public key
+        with open('./app/static/json/certificates.json') as f:
+            public_key = VerifyingKey.from_pem((json.load(f))[algo_name][kid]["publicKeyPem"])
+        # public_key = VerifyingKey.from_der(pk_der)
+        assert(public_key.verify(signature, payload,  hashfunc=hashlib.sha256))
+    elif algo == 1:
+        #open public key
+        pass
 
-    # public_key = VerifyingKey.from_der(pk_der)
-
-    #open public key
-    with open('./app/static/json/certificates.json') as f:
-        public_key = VerifyingKey.from_pem((json.load(f))[kid]["publicKeyPem"])
-    assert(public_key.verify(signature, payload,  hashfunc=hashlib.sha256))
-
-def sign_newcose(payload_dict, kid=2, algo=0):
+def sign_newcose(payload_dict, algo=0, kid=2):
     try:
         #open private key store
-        ks = jks.KeyStore.load('./app/certs/privateKey.jks', 'private')
+        if (algo == 0):
+            ks = jks.KeyStore.load('./app/certs/privateKeyES.jks', 'private')
+        else:
+            ks = jks.KeyStore.load('./app/certs/privateKeyRSA.jks', 'private')
         pk = ks.private_keys[str(kid)]
+        
         if not pk.is_decrypted():
             pk.decrypt('private')
         if pk.algorithm_oid == jks.util.RSA_ENCRYPTION_OID:
@@ -278,17 +292,18 @@ def sign_newcose(payload_dict, kid=2, algo=0):
         else:
             pk_der = pk.pkey_pkcs8
 
-        private_key = SigningKey.from_der(pk_der)
-            
-        # with open("./app/certs/private.pem") as key_file:
-        #     private_key = SigningKey.from_pem(key_file.read())
-
-        #algorithm used
-        algo = algo.to_bytes(1, byteorder='big')
         #create neocbor structure
-        neocbor = NeoCBOR(payload_dict, kid)
+        neocbor = NeoCBOR(payload_dict, kid)  
         #sign neocbor bytes
-        signature = private_key.sign(neocbor.payload, hashfunc=hashlib.sha256)
+        if algo == 0: 
+            private_key = SigningKey.from_der(pk_der)
+            signature = private_key.sign(neocbor.payload, hashfunc=hashlib.sha256)
+        else:
+            private_key = rsa.PrivateKey.load_pkcs1(pk_der, 'DER')
+            signature = rsa.sign(neocbor.payload, private_key, 'SHA-256')
+            
+        #algorithm used
+        algo = algo.to_bytes(1, byteorder='big')   
         #concatenate algorithm id, signature and payload bytes
         full_payload = algo + signature + neocbor.payload
         # print(len(full_payload))
@@ -300,10 +315,10 @@ def sign_newcose(payload_dict, kid=2, algo=0):
         # print(len(base45_data))
         #check if generated signature is correct
         verify_newcose(base45_data)
-        decode_newcose(base45_data)
+        # decode_newcose(base45_data)
         return base45_data
     except Exception as e:
-        print("ERROR: " + str(e))
+        print("ERROR at Sign: " + str(e))
         return False
     
     

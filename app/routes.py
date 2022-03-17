@@ -4,7 +4,7 @@ from app import app
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html', generated=False)
+    return render_template('index.html', generated="")
 
 from app.api import bp as flights_blueprint
 app.register_blueprint(flights_blueprint)

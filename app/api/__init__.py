@@ -1,10 +1,11 @@
 from datetime import date, datetime
 import time
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, render_template, make_response
 from app.func import *
 
 
 bp = Blueprint('api', __name__)
+csp = ""
 
 
 HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
@@ -117,19 +118,24 @@ def sign():
                 }
             }
         else:
-            render_template('index.html', generated=False)
+            response = make_response(render_template('index.html', generated=1, payload=[]))
+            response.headers['Content-Security-Policy-Report-Only'] = csp
+            return response
+            
 
         base45_data = sign_newcose(payload)
-        if base45_data:
-            generated = 1
-        else:
-            generated = 0
-        return render_template('index.html',
-                                generated=generated,
+        if not base45_data:
+            base45_data =""
+        response = make_response(render_template('index.html',
+                                generated=1,
                                 payload=base45_data
-        )
+        ))
+        response.headers['Content-Security-Policy-Report-Only'] = csp
+        return response
     else:
-        return render_template('index.html', generated=False)
+        response = make_response(render_template('index.html', generated=""))
+        response.headers['Content-Security-Policy-Report-Only'] = csp
+        return response
 
 @bp.route('/certificateList', methods=['GET'])
 def certificateList():
@@ -139,9 +145,9 @@ def certificateList():
                 data = json.load(f)
             return data
         else:
-            return render_template('index.html', generated=False)
+            return {}
     except Exception as e:
-        return render_template('index.html', generated=False)
+        return e
 
 @bp.route('/vaccineList', methods=['GET'])
 def vaccineList():
@@ -151,9 +157,9 @@ def vaccineList():
                 data = json.load(f)
             return data
         else:
-            return render_template('index.html', generated=False)
+            return {}
     except Exception as e:
-        return render_template('index.html', generated=False)
+        return e
 
 @bp.route('/testList', methods=['GET'])
 def testList():
@@ -163,9 +169,9 @@ def testList():
                 data = json.load(f)
             return data
         else:
-            return render_template('index.html', generated=False)
+            return {}
     except Exception as e:
-        return render_template('index.html', generated=False)
+        return e
 
 @bp.route('/diseaseList', methods=['GET'])
 def diseaseList():
@@ -175,9 +181,9 @@ def diseaseList():
                 data = json.load(f)
             return data
         else:
-            return render_template('index.html', generated=False)
+            return {}
     except Exception as e:
-        return render_template('index.html', generated=False)
+        return e
 
 
 @bp.route('/algorithmList', methods=['GET'])
@@ -188,6 +194,30 @@ def algorithmList():
                 data = json.load(f)
             return data
         else:
-            return render_template('index.html', generated=False)
+            return {}
     except Exception as e:
-        return render_template('index.html', generated=False)
+        return e
+
+@bp.route('/valueSets', methods=['GET'])
+def valueSets():
+    try:
+        if request.method == 'GET':
+            with open('./app/static/json/valueSets.json', 'r') as f:
+                data = json.load(f)
+            return data
+        else:
+            return {}
+    except Exception as e:
+        return e
+
+@bp.route('/rules', methods=['GET'])
+def rules():
+    try:
+        if request.method == 'GET':
+            with open('./app/static/json/rules.json', 'r') as f:
+                data = json.load(f)
+            return data
+        else:
+            return {}
+    except Exception as e:
+        return e
