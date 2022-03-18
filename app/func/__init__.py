@@ -55,7 +55,7 @@ def public_certs():
     with open("app/static/json/certificates.json", "w") as f:
         json.dump(keys, f, indent=4)
 
-public_certs()
+# public_certs()
 
 class NeoCBOR:
     def __init__(self, payload_dict, kid):
@@ -307,16 +307,25 @@ def sign_newcose(payload_dict, algo=0, kid=2):
         #concatenate algorithm id, signature and payload bytes
         full_payload = algo + signature + neocbor.payload
         # print(len(full_payload))
+        print("Uncompressed: "+str(len(full_payload)))
         #compress full payload with zlib -> encode in base45 -> from bytes to string for the qr code creation
         zlib_data = zlib.compress(full_payload)
+        print("Compressed: "+str(len(zlib_data)))
         base45_data = base45.b45encode(zlib_data)
+        base45_data2 = base45.b45encode(full_payload)
+
+        # print(base45_data)
+        iso_8859_1 = full_payload.decode('iso-8859-1')
         base45_data = base45_data.decode('utf-8')
-        print(base45_data)
-        # print(len(base45_data))
+        base45_data2 = base45_data2.decode('utf-8')
+        print("Uncompressed base45: "+str(len(base45_data2)))
+        print("Uncompressed iso_8859_1: "+str(len(iso_8859_1)))
+        print("Compressed base45: "+str(len(base45_data)))
+        print(base45_data2)
         #check if generated signature is correct
         verify_newcose(base45_data)
         # decode_newcose(base45_data)
-        return base45_data
+        return base45_data2
     except Exception as e:
         print("ERROR at Sign: " + str(e))
         return False
