@@ -22,6 +22,7 @@ import jks #https://pypi.org/project/pyjks/
 from cryptography import x509
 from cryptography.hazmat.primitives import serialization, hashes
 import rsa
+import base64
 
 def add_storedKeys(store_path, psw):
     ks = jks.KeyStore.load(store_path, psw)
@@ -243,7 +244,7 @@ def verify_newcose(payload):
     # from string to bytes -> decode base45 -> decompress with zlib
     payload = payload.encode('utf-8')
     payload = base45.b45decode(payload)
-    payload = zlib.decompress(payload)
+    # payload = zlib.decompress(payload)
     #extract algorithm id and check length of signature
     algo = payload[0]
     with open('./app/static/json/algorithm.json') as f:
@@ -313,19 +314,29 @@ def sign_newcose(payload_dict, algo=0, kid=2):
         print("Compressed: "+str(len(zlib_data)))
         base45_data = base45.b45encode(zlib_data)
         base45_data2 = base45.b45encode(full_payload)
+        base32_data = base64.b32encode(full_payload)
+        base64_data = base64.b64encode(full_payload)
+        
 
         # print(base45_data)
+        
         iso_8859_1 = full_payload.decode('iso-8859-1')
         base45_data = base45_data.decode('utf-8')
         base45_data2 = base45_data2.decode('utf-8')
+        base32_data = base32_data.decode('utf-8')
+        base64_data = base64_data.decode('utf-8')
         print("Uncompressed base45: "+str(len(base45_data2)))
         print("Uncompressed iso_8859_1: "+str(len(iso_8859_1)))
         print("Compressed base45: "+str(len(base45_data)))
         print(base45_data2)
+        print(base32_data)
+        print(base64_data)
         #check if generated signature is correct
-        verify_newcose(base45_data)
+        verify_newcose(base45_data2)
+
         # decode_newcose(base45_data)
         return base45_data2
+        return full_payload.hex()
     except Exception as e:
         print("ERROR at Sign: " + str(e))
         return False

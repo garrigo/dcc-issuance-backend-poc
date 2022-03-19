@@ -1,4 +1,4 @@
-# DCC QR Issuance Backend
+# DCC Issuance Backend
 
 ---
 
