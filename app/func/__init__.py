@@ -58,78 +58,80 @@ def public_certs():
 
 # public_certs()
 
-class NeoCBOR:
-    def __init__(self, payload_dict, kid):
-        #kid
-        self.payload = (kid).to_bytes(2, byteorder='big').hex()
-        #tag for number of bytes used by unix time integer
-        hex_temp = (hex(payload_dict[4]))[2:]
-        self.payload = self.payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
-        #unix date
-        self.payload = self.payload + hex_temp
-        #tag for number of bytes used by unix time integer
-        hex_temp = (hex(payload_dict[6]))[2:]
-        self.payload = self.payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
-        #unix date
-        self.payload = self.payload + hex_temp
-        #tag for bytes used by surname
-        hex_temp = (payload_dict[-260][1]["nam"]["fn"]).encode('utf-8').hex()
-        self.payload = self.payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
-        self.payload = self.payload + hex_temp
-        #tag for bytes used by name
-        hex_temp = (payload_dict[-260][1]["nam"]["gn"]).encode('utf-8').hex()
-        self.payload = self.payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
-        self.payload = self.payload + hex_temp
-        #tag for number of bytes used by unix time integer
-        
-        hex_temp = (hex(payload_dict[-260][1]["dob"]))[2:]
-        self.payload = self.payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
-        self.payload = self.payload + hex_temp
-        if "v" in payload_dict[-260][1]:
-            #vaccine certificate (v)
-            self.payload = self.payload + (1).to_bytes(1, byteorder='big').hex()
-            #disease targeted num (tg)
-            self.payload = self.payload + (payload_dict[-260][1]["v"][0]["tg"]).to_bytes(2, byteorder='big').hex()
-            #vaccine used (mp)
-            self.payload = self.payload + (payload_dict[-260][1]["v"][0]["mp"]).to_bytes(2, byteorder='big').hex()
-            #doses done and expected (dn - sd)
-            self.payload = self.payload + (payload_dict[-260][1]["v"][0]["dn"]).to_bytes(1, byteorder='big').hex()
-            self.payload = self.payload + (payload_dict[-260][1]["v"][0]["sd"]).to_bytes(1, byteorder='big').hex()
-            #date of vaccine (dt)
-            hex_temp = (hex(payload_dict[-260][1]["v"][0]["dt"]))[2:]
-            self.payload = self.payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
-            self.payload = self.payload + hex_temp
-        elif "t" in payload_dict[-260][1]:
-            #test certificate (t)
-            self.payload = self.payload + (2).to_bytes(1, byteorder='big').hex()
-            #disease targeted num (tg)
-            self.payload = self.payload + (payload_dict[-260][1]["t"][0]["tg"]).to_bytes(2, byteorder='big').hex()
-            #test result (tr)
-            self.payload = self.payload + (payload_dict[-260][1]["t"][0]["tr"]).to_bytes(1, byteorder='big').hex()
-            #test used (ma)
-            self.payload = self.payload + (payload_dict[-260][1]["t"][0]["ma"]).to_bytes(2, byteorder='big').hex()
-            #date of test (sc)
-            hex_temp = (hex(payload_dict[-260][1]["t"][0]["sc"]))[2:]
-            self.payload = self.payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
-            self.payload = self.payload + hex_temp
-        elif "r" in payload_dict[-260][1]:
-            #recovery certificate
-            self.payload = self.payload + (3).to_bytes(1, byteorder='big').hex()
-            #disease targeted num (tg)
-            self.payload = self.payload + (payload_dict[-260][1]["r"][0]["tg"]).to_bytes(2, byteorder='big').hex()
-            #date of first positive test (fr)
-            hex_temp = (hex(payload_dict[-260][1]["r"][0]["fr"]))[2:]
-            self.payload = self.payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
-            self.payload = self.payload + hex_temp
-            #date of beginning validity (df)
-            hex_temp = (hex(payload_dict[-260][1]["r"][0]["df"]))[2:]
-            self.payload = self.payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
-            self.payload = self.payload + hex_temp
-            #date of ending validity (du)
-            hex_temp = (hex(payload_dict[-260][1]["r"][0]["du"]))[2:]
-            self.payload = self.payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
-            self.payload = self.payload + hex_temp
-        self.payload = bytes.fromhex(self.payload)
+def encodeDCC(payload_dict, algo, kid):
+    #kid
+    payload = algo.to_bytes(1, byteorder='big').hex()
+    payload = algo.to_bytes(1, byteorder='big').hex()
+    payload = payload + (kid).to_bytes(2, byteorder='big').hex()
+    #tag for number of bytes used by unix time integer
+    hex_temp = (hex(payload_dict[4]))[2:]
+    payload = payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
+    #unix date
+    payload = payload + hex_temp
+    #tag for number of bytes used by unix time integer
+    hex_temp = (hex(payload_dict[6]))[2:]
+    payload = payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
+    #unix date
+    payload = payload + hex_temp
+    #tag for bytes used by surname
+    hex_temp = (payload_dict[-260][1]["nam"]["fn"]).encode('utf-8').hex()
+    payload = payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
+    payload = payload + hex_temp
+    #tag for bytes used by name
+    hex_temp = (payload_dict[-260][1]["nam"]["gn"]).encode('utf-8').hex()
+    payload = payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
+    payload = payload + hex_temp
+    #tag for number of bytes used by unix time integer
+    
+    hex_temp = (hex(payload_dict[-260][1]["dob"]))[2:]
+    payload = payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
+    payload = payload + hex_temp
+    if "v" in payload_dict[-260][1]:
+        #vaccine certificate (v)
+        payload = payload + (1).to_bytes(1, byteorder='big').hex()
+        #disease targeted num (tg)
+        payload = payload + (payload_dict[-260][1]["v"][0]["tg"]).to_bytes(2, byteorder='big').hex()
+        #vaccine used (mp)
+        payload = payload + (payload_dict[-260][1]["v"][0]["mp"]).to_bytes(2, byteorder='big').hex()
+        #doses done and expected (dn - sd)
+        payload = payload + (payload_dict[-260][1]["v"][0]["dn"]).to_bytes(1, byteorder='big').hex()
+        payload = payload + (payload_dict[-260][1]["v"][0]["sd"]).to_bytes(1, byteorder='big').hex()
+        #date of vaccine (dt)
+        hex_temp = (hex(payload_dict[-260][1]["v"][0]["dt"]))[2:]
+        payload = payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
+        payload = payload + hex_temp
+    elif "t" in payload_dict[-260][1]:
+        #test certificate (t)
+        payload = payload + (2).to_bytes(1, byteorder='big').hex()
+        #disease targeted num (tg)
+        payload = payload + (payload_dict[-260][1]["t"][0]["tg"]).to_bytes(2, byteorder='big').hex()
+        #test result (tr)
+        payload = payload + (payload_dict[-260][1]["t"][0]["tr"]).to_bytes(1, byteorder='big').hex()
+        #test used (ma)
+        payload = payload + (payload_dict[-260][1]["t"][0]["ma"]).to_bytes(2, byteorder='big').hex()
+        #date of test (sc)
+        hex_temp = (hex(payload_dict[-260][1]["t"][0]["sc"]))[2:]
+        payload = payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
+        payload = payload + hex_temp
+    elif "r" in payload_dict[-260][1]:
+        #recovery certificate
+        payload = payload + (3).to_bytes(1, byteorder='big').hex()
+        #disease targeted num (tg)
+        payload = payload + (payload_dict[-260][1]["r"][0]["tg"]).to_bytes(2, byteorder='big').hex()
+        #date of first positive test (fr)
+        hex_temp = (hex(payload_dict[-260][1]["r"][0]["fr"]))[2:]
+        payload = payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
+        payload = payload + hex_temp
+        #date of beginning validity (df)
+        hex_temp = (hex(payload_dict[-260][1]["r"][0]["df"]))[2:]
+        payload = payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
+        payload = payload + hex_temp
+        #date of ending validity (du)
+        hex_temp = (hex(payload_dict[-260][1]["r"][0]["du"]))[2:]
+        payload = payload + (len(hex_temp)//2).to_bytes(1, byteorder='big').hex()
+        payload = payload + hex_temp
+    payload = bytes.fromhex(payload)
+    return payload
 
 
 # Decode DCC
@@ -248,11 +250,11 @@ def verify_newcose(payload):
     #extract algorithm id and check length of signature
     algo = payload[0]
     with open('./app/static/json/algorithm.json') as f:
-        signature_gap = (json.load(f))["valueSetValues"][str(algo)]["signatureBytes"] + 1
+        signature_length = (json.load(f))["valueSetValues"][str(algo)]["signatureBytes"]
     #extract signature and payload and verify the former against the latter
-    signature = payload[1:signature_gap]
-    payload = payload[signature_gap:]
-    kid = str(int.from_bytes(payload[0:2], "big"))
+    signature = payload[-signature_length:]
+    payload = payload[0:-signature_length]
+    kid = str(int.from_bytes(payload[1:3], "big"))
     #open public key store
     if algo == 0:
         algo_name = "ECDSA"
@@ -293,50 +295,48 @@ def sign_newcose(payload_dict, algo=0, kid=2):
         else:
             pk_der = pk.pkey_pkcs8
 
-        #create neocbor structure
-        neocbor = NeoCBOR(payload_dict, kid)  
-        #sign neocbor bytes
+        #create dcc payload
+        dcc_payload = encodeDCC(payload_dict, algo, kid)  
+        #sign dcc_payload bytes
         if algo == 0: 
             private_key = SigningKey.from_der(pk_der)
-            signature = private_key.sign(neocbor.payload, hashfunc=hashlib.sha256)
+            signature = private_key.sign(dcc_payload, hashfunc=hashlib.sha256)
         else:
             private_key = rsa.PrivateKey.load_pkcs1(pk_der, 'DER')
-            signature = rsa.sign(neocbor.payload, private_key, 'SHA-256')
-            
-        #algorithm used
-        algo = algo.to_bytes(1, byteorder='big')   
-        #concatenate algorithm id, signature and payload bytes
-        full_payload = algo + signature + neocbor.payload
-        # print(len(full_payload))
-        print("Uncompressed: "+str(len(full_payload)))
+            signature = rsa.sign(dcc_payload, private_key, 'SHA-256')
+        print(dcc_payload)
+        #concatenate payload and signature bytes
+        dcc = dcc_payload + signature 
+        # print(len(dcc))
+        # print("Uncompressed: "+str(len(dcc)))
         #compress full payload with zlib -> encode in base45 -> from bytes to string for the qr code creation
-        zlib_data = zlib.compress(full_payload)
-        print("Compressed: "+str(len(zlib_data)))
+        zlib_data = zlib.compress(dcc)
+        # print("Compressed: "+str(len(zlib_data)))
         base45_data = base45.b45encode(zlib_data)
-        base45_data2 = base45.b45encode(full_payload)
-        base32_data = base64.b32encode(full_payload)
-        base64_data = base64.b64encode(full_payload)
+        base45_data2 = base45.b45encode(dcc)
+        base32_data = base64.b32encode(dcc)
+        base64_data = base64.b64encode(dcc)
         
 
         # print(base45_data)
         
-        iso_8859_1 = full_payload.decode('iso-8859-1')
+        iso_8859_1 = dcc.decode('iso-8859-1')
         base45_data = base45_data.decode('utf-8')
         base45_data2 = base45_data2.decode('utf-8')
         base32_data = base32_data.decode('utf-8')
         base64_data = base64_data.decode('utf-8')
-        print("Uncompressed base45: "+str(len(base45_data2)))
-        print("Uncompressed iso_8859_1: "+str(len(iso_8859_1)))
-        print("Compressed base45: "+str(len(base45_data)))
-        print(base45_data2)
-        print(base32_data)
-        print(base64_data)
+        # print("Uncompressed base45: "+str(len(base45_data2)))
+        # print("Uncompressed iso_8859_1: "+str(len(iso_8859_1)))
+        # print("Compressed base45: "+str(len(base45_data)))
+        # print(base45_data2)
+        # print(base32_data)
+        # print(base64_data)
         #check if generated signature is correct
         verify_newcose(base45_data2)
 
         # decode_newcose(base45_data)
         return base45_data2
-        return full_payload.hex()
+        return dcc.hex()
     except Exception as e:
         print("ERROR at Sign: " + str(e))
         return False
