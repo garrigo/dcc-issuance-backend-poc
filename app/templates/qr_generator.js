@@ -14,25 +14,22 @@ $( document ).ready(function() {
             // var decoder = new TextDecoder('iso-8859-1')
             // var bytes = new Uint8Array(hexToBytes(payload))
             // var qrString = decoder.decode(bytes);
-            var qrString = String(payload);
 
             /* https://github.com/zingl/2D-Barcode */
-            code = quickresponse(payload,'L')
-            // code = aztec(payload, 2)
-            var image = document.createElement("img");
-            image.setAttribute("src", toGif(code, 7));
+            var src = toGif(quickresponse(payload,'L'), 7, undefined, 3).replace("image/gif", "image/png");
 
+            /* aztec testing */
+            // var src = toGif(aztec(payload, 2), 7, undefined, 3)).replace("image/gif", "image/png");
+
+            var image = document.createElement("img");
+            image.setAttribute("src", src);
             // show success message
             document.getElementById('succ-msg').className = "alert alert-success";
-            document.getElementById('succ-msg').innerHTML = "QR has been correctly generated.";
+            document.getElementById('succ-msg').innerHTML = "The QR code has been correctly generated.";
             // append qr rectangle to page and show download and signature verification buttons
+            document.getElementById('download-link').setAttribute("href", src);
             document.getElementById("qrcode-canvas").appendChild(image);
             document.getElementById('download').style.display = "block"; 
-            // on-click listener for the download button
-            document.getElementById('download').addEventListener('click', function() {
-                // download generated image as jpg with a random name
-                qrCode.download({ name: "DCC", extension: "jpeg"});
-            }, false);
         }
         else{
             // show error message
