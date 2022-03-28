@@ -18,3 +18,4 @@ cwt
 cbor_json
 ecdsa
 rsa
+msgpack

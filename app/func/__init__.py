@@ -24,6 +24,54 @@ from cryptography.hazmat.primitives import serialization, hashes
 import rsa
 import base64
 
+payload = "6BFOXN%TS3DHC S+/C6Y5J:74H95NL-AH+UCIOOA%I+645DO7/IQKVUD7IT4V22F/8X*G3M9JUPY0BX/KS96R/S09T./0LWTKD33238J3HKB5S4VV2 73-E3GG396B-43O058YIZ734234LTX63FG30$499TPU1PK9CZL9L6G%UBB6OMEU56JPEO*E$T6%P65UTF8EUM6%QE$QE$96H07RW6RA632N7PPDFPVX1R270:6NEQ.P6CG3GDB+6TYIJGDBQMI%ZIKCIGOJ0UIM42PBJBKB/MJZ JFYJ4OIMEDTJCDID$%MQQ5L/5R3FOKEH-BDNJE8A99LE4GUHBCZI:ZJ83BB9UUPT+.TJZTLZI1.0O*47*KB*KYQTKWTNS4.$S6ZC0JBDQJDG3ZQTNIBX87LD7S9WBSCHX7QKVQWP6XMAW4*36%:KG3N:7UI6SKZ6A:4ZUL YV*MU2TH2G4L4D +T96T9RQ.OHPTBS*9C4W+MPF.6:PE/WN.-E0003:NF.E"
+payload = payload.encode('utf-8')
+payload = base45.b45decode(payload)
+payload = zlib.decompress(payload)
+# print(payload.hex())
+
+msg = {
+    18: [
+        {
+            4: "CEB332B4",
+            1: -7
+        },
+        {},
+        {
+            4: 1683849600,
+            6: 1627989097,
+            1: "IT",
+            -260: {
+                1: {
+                    "v": [
+                        {
+                            "dn": 2,
+                            "ma": "ORG-100030215",
+                            "vp": "1119349007",
+                            "dt": "2021-08-02",
+                            "co": "IT",
+                            "ci": "01IT4F66CD2D369244C6AE064233599F2C0E#4",
+                            "mp": "EU/1/20/1528",
+                            "is": "Ministero della Salute",
+                            "sd": 2,
+                            "tg": "840539006"
+                        }
+                    ],
+                    "nam": {
+                        "fnt": "ARRIGO",
+                        "fn": "ARRIGO",
+                        "gnt": "GIACOMO",
+                        "gn": "GIACOMO"
+                    },
+                    "ver": "1.0.0",
+                    "dob": "1995-05-18"
+                }
+            }
+        }
+    ]
+}
+
+
 def add_storedKeys(store_path, psw):
     ks = jks.KeyStore.load(store_path, psw)
     keys = {}
@@ -287,18 +335,26 @@ def sign_newcose(payload_dict, algo=0, kid=2):
         print("ERROR at Sign: " + str(e))
         return False
     
-    
 
 
-
-
-
-def sign_GP(payload_dict, kid_int):
+def sign_GP(payload_dict, kid_int=1, algo=0):
 
     #payload of the DCC get passed to the 
     payload = cbor_json.cbor_from_native(payload_dict)
     kid = kid_int.to_bytes(2, 'big')
+            #open private key store
+    # if (algo == 0):
+    #     ks = jks.KeyStore.load('./app/certs/privateKeyES.jks', 'private')
+    # else:
+    #     ks = jks.KeyStore.load('./app/certs/privateKeyRSA.jks', 'private')
+    # pk = ks.private_keys[str(kid_int)]
     
+    # if not pk.is_decrypted():
+    #     pk.decrypt('private')
+    # if pk.algorithm_oid == jks.util.RSA_ENCRYPTION_OID:
+    #     pk_der = pk.pkey
+    # else:
+    #     pk_der = pk.pkey_pkcs8
     with open("./app/certs/private.pem") as key_file:
         private_key = COSEKey.from_pem(key_file.read()) 
 
@@ -316,11 +372,11 @@ def sign_GP(payload_dict, kid_int):
     decoded = Sign1Message.decode(encoded)
     decoded.key = cose_key
     assert(decoded.verify_signature())
-
+    print(len(encoded))
     cose_hex = bytes.fromhex(encoded.hex())
-    # print(cose_hex.hex())
+    print(cose_hex.hex())
     zlib_data = zlib.compress(cose_hex) 
     base45_data = base45.b45encode(zlib_data)
     base45_data = "HC1:"+base45_data.decode('utf-8')
-    # print(len(base45_data))
+    print(len(base45_data))
     return base45_data
