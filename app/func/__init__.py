@@ -24,52 +24,6 @@ from cryptography.hazmat.primitives import serialization, hashes
 import rsa
 import base64
 
-payload = "6BFOXN%TS3DHC S+/C6Y5J:74H95NL-AH+UCIOOA%I+645DO7/IQKVUD7IT4V22F/8X*G3M9JUPY0BX/KS96R/S09T./0LWTKD33238J3HKB5S4VV2 73-E3GG396B-43O058YIZ734234LTX63FG30$499TPU1PK9CZL9L6G%UBB6OMEU56JPEO*E$T6%P65UTF8EUM6%QE$QE$96H07RW6RA632N7PPDFPVX1R270:6NEQ.P6CG3GDB+6TYIJGDBQMI%ZIKCIGOJ0UIM42PBJBKB/MJZ JFYJ4OIMEDTJCDID$%MQQ5L/5R3FOKEH-BDNJE8A99LE4GUHBCZI:ZJ83BB9UUPT+.TJZTLZI1.0O*47*KB*KYQTKWTNS4.$S6ZC0JBDQJDG3ZQTNIBX87LD7S9WBSCHX7QKVQWP6XMAW4*36%:KG3N:7UI6SKZ6A:4ZUL YV*MU2TH2G4L4D +T96T9RQ.OHPTBS*9C4W+MPF.6:PE/WN.-E0003:NF.E"
-payload = payload.encode('utf-8')
-payload = base45.b45decode(payload)
-payload = zlib.decompress(payload)
-# print(payload.hex())
-
-msg = {
-    18: [
-        {
-            4: "CEB332B4",
-            1: -7
-        },
-        {},
-        {
-            4: 1683849600,
-            6: 1627989097,
-            1: "IT",
-            -260: {
-                1: {
-                    "v": [
-                        {
-                            "dn": 2,
-                            "ma": "ORG-100030215",
-                            "vp": "1119349007",
-                            "dt": "2021-08-02",
-                            "co": "IT",
-                            "ci": "01IT4F66CD2D369244C6AE064233599F2C0E#4",
-                            "mp": "EU/1/20/1528",
-                            "is": "Ministero della Salute",
-                            "sd": 2,
-                            "tg": "840539006"
-                        }
-                    ],
-                    "nam": {
-                        "fnt": "ARRIGO",
-                        "fn": "ARRIGO",
-                        "gnt": "GIACOMO",
-                        "gn": "GIACOMO"
-                    },
-                    "ver": "1.0.0",
-                    "dob": "1995-05-18"
-                }
-            }
-        }
-    ]
-}
 
 
 def add_storedKeys(store_path, psw):
@@ -106,25 +60,32 @@ def public_certs():
 
 # public_certs()
 
+def encode (payload, schema):
+    byteString = b''
+    for block in schema:  
+        if block["type"] == "int":
+            num = (payload[block["id"] ]).to_bytes(block["bytes"], byteorder='big')
+            byteString = byteString + num
+        elif block["type"] == "string":
+            temp = bytes(payload[block["id"] ], 'utf-8')
+            byteString = byteString + (len(temp)).to_bytes(block["bytes"], byteorder='big')
+            byteString = byteString + temp 
+        elif block["type"] == "date":
+            hex_temp = (hex(payload[block["id"] ]))[2:]
+            byteString = byteString + (len(hex_temp)//2).to_bytes(block["bytes"], byteorder='big')
+            byteString = byteString + bytes.fromhex(hex_temp)
+        elif block["type"] == "switch":
+            if str(payload[block["id"]]) in block["cases"]:
+                byteString = byteString + encode(payload, block["cases"][str(payload[block["id"]])])
+            else:
+                raise Exception("Certificate type not recognized.")
+    return byteString
+
 def encodeDCC(payload):
     dcc = b''
     with open("app/static/json/dccBlueprint.json", "r") as f:
-              
-        schema = (json.load(f))["schema"]
-        blueprint = schema[0]["shared"] + schema[1]["exclusive"][str(payload["cert_type"])]
-        
-        for block in blueprint:  
-            if block["type"] == "int":
-                num = (payload[block["id"] ]).to_bytes(block["bytes"], byteorder='big')
-                dcc = dcc + num
-            elif block["type"] == "string":
-                temp = bytes(payload[block["id"] ], 'utf-8')
-                dcc = dcc + (len(temp)).to_bytes(block["bytes"], byteorder='big')
-                dcc = dcc + temp 
-            elif block["type"] == "date":
-                hex_temp = (hex(payload[block["id"] ]))[2:]
-                dcc = dcc + (len(hex_temp)//2).to_bytes(block["bytes"], byteorder='big')
-                dcc = dcc + bytes.fromhex(hex_temp)
+        schema = (json.load(f))[str(payload["version"])]["schema"]
+        dcc = encode(payload, schema)
     return dcc
 
 
@@ -273,8 +234,8 @@ def verify_newcose(payload):
         #open public key
         pass
 
-def sign_newcose(payload_dict, algo=0, kid=2):
-    try:
+def sign_newcose(payload_dict, algo=0, kid=2, version=1):
+    # try:
         #open private key store
         if (algo == 0):
             ks = jks.KeyStore.load('./app/certs/privateKeyES.jks', 'private')
@@ -290,6 +251,7 @@ def sign_newcose(payload_dict, algo=0, kid=2):
             pk_der = pk.pkey_pkcs8
         payload_dict["algorithm"] = algo
         payload_dict["kid"] = kid
+        payload_dict["version"] = version
         #create dcc payload
         dcc_payload = encodeDCC(payload_dict)  
         #sign dcc_payload bytes
@@ -322,7 +284,7 @@ def sign_newcose(payload_dict, algo=0, kid=2):
         # print("Uncompressed base45: "+str(len(base45_data2)))
         # print("Uncompressed iso_8859_1: "+str(len(iso_8859_1)))
         # print("Compressed base45: "+str(len(base45_data)))
-        # print(base45_data2)
+        print(base45_data2)
         # print(base32_data)
         # print(base64_data)
         #check if generated signature is correct
@@ -331,9 +293,9 @@ def sign_newcose(payload_dict, algo=0, kid=2):
         # decode_newcose(base45_data)
         return base45_data2
         return dcc.hex()
-    except Exception as e:
-        print("ERROR at Sign: " + str(e))
-        return False
+    # except Exception as e:
+    #     print("ERROR at Sign: " + str(e))
+    #     return False
     
 
 

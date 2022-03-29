@@ -66,7 +66,7 @@
                     {
                         "===": [
                             {
-                                "var": "payload.certType"
+                                "var": "payload.cert_type"
                             },
                             3
                         ]
@@ -74,17 +74,17 @@
                     {
                         "and": [
                             {
-                                "var": "payload.dateDf"
+                                "var": "payload.date_from"
                             },
                             {
-                                "var": "payload.dateDu"
+                                "var": "payload.date_until"
                             },
                             {
                                 "not-after": [
                                     {
                                         "plusTime": [
                                             {
-                                                "var": "payload.dateDf"
+                                                "var": "payload.date_from"
                                             },
                                             0,
                                             "day"
@@ -102,7 +102,7 @@
                                     {
                                         "plusTime": [
                                             {
-                                                "var": "payload.dateDu"
+                                                "var": "payload.date_until"
                                             },
                                             0,
                                             "day"
@@ -144,7 +144,7 @@
                     {
                         "===": [
                             {
-                                "var": "payload.certType"
+                                "var": "payload.cert_type"
                             },
                             3
                         ]
@@ -152,20 +152,20 @@
                     {
                         "and": [
                             {
-                                "var": "payload.dateDf"
+                                "var": "payload.date_from"
                             },
                             {
-                                "var": "payload.dateDu"
+                                "var": "payload.date_until"
                             },
                             {
-                                "var": "payload.dateFr"
+                                "var": "payload.date_test"
                             },
                             {
                                 "not-before": [
                                     {
                                         "plusTime": [
                                             {
-                                                "var": "payload.dateDf"
+                                                "var": "payload.date_from"
                                             },
                                             0,
                                             "day"
@@ -174,7 +174,7 @@
                                     {
                                         "plusTime": [
                                             {
-                                                "var": "payload.dateFr"
+                                                "var": "payload.date_test"
                                             },
                                             11,
                                             "day"
@@ -187,7 +187,7 @@
                                     {
                                         "plusTime": [
                                             {
-                                                "var": "payload.dateDu"
+                                                "var": "payload.date_until"
                                             },
                                             0,
                                             "day"
@@ -196,7 +196,7 @@
                                     {
                                         "plusTime": [
                                             {
-                                                "var": "payload.dateFr"
+                                                "var": "payload.date_test"
                                             },
                                             180,
                                             "day"
@@ -236,7 +236,7 @@
                     {
                         "===": [
                             {
-                                "var": "payload.certType"
+                                "var": "payload.cert_type"
                             },
                             2
                         ]
@@ -244,12 +244,12 @@
                     {
                         "and": [
                             {
-                                "var": "payload.testId"
+                                "var": "payload.test_used"
                             },
                             {
                                 "in": [
                                     {
-                                        "var": "payload.testId"
+                                        "var": "payload.test_used"
                                     },
                                     {
                                         "var": "external.valueSets.covid-19-lab-test-type"
@@ -288,7 +288,7 @@
                     {
                         "===": [
                             {
-                                "var": "payload.certType"
+                                "var": "payload.cert_type"
                             },
                             2
                         ]
@@ -296,7 +296,7 @@
                     {
                         "and": [
                             {
-                                "var": "payload.dateTest"
+                                "var": "payload.date_test"
                             },
                             {
                                 "before": [
@@ -312,7 +312,7 @@
                                     {
                                         "plusTime": [
                                             {
-                                                "var": "payload.dateTest"
+                                                "var": "payload.date_test"
                                             },
                                             72,
                                             "hour"
@@ -352,7 +352,7 @@
                     {
                         "===": [
                             {
-                                "var": "payload.certType"
+                                "var": "payload.cert_type"
                             },
                             2
                         ]
@@ -360,12 +360,12 @@
                     {
                         "and": [
                             {
-                                "var": "payload.testResult"
+                                "var": "payload.test_result"
                             },
                             {
                                 "===": [
                                     {
-                                        "var": "payload.testResult"
+                                        "var": "payload.test_result"
                                     },
                                     "0"
                                 ]
@@ -402,7 +402,7 @@
                     {
                         "===": [
                             {
-                                "var": "payload.certType"
+                                "var": "payload.cert_type"
                             },
                             1
                         ]
@@ -471,7 +471,7 @@
                     {
                         "===": [
                             {
-                                "var": "payload.certType"
+                                "var": "payload.cert_type"
                             },
                             1
                         ]
@@ -479,18 +479,18 @@
                     {
                         "and": [
                             {
-                                "var": "payload.dosesDone"
+                                "var": "payload.doses_done"
                             },
                             {
-                                "var": "payload.dosesReq"
+                                "var": "payload.doses_required"
                             },
                             {
                                 ">=": [
                                     {
-                                        "var": "payload.dosesDone"
+                                        "var": "payload.doses_done"
                                     },
                                     {
-                                        "var": "payload.dosesReq"
+                                        "var": "payload.doses_required"
                                     }
                                 ]
                             }
@@ -526,7 +526,7 @@
                     {
                         "===": [
                             {
-                                "var": "payload.certType"
+                                "var": "payload.cert_type"
                             },
                             1
                         ]
@@ -534,14 +534,14 @@
                     {
                         "and": [
                             {
-                                "var": "payload.dateVax"
+                                "var": "payload.date_vaccine"
                             },
                             {
                                 "before": [
                                     {
                                         "plusTime": [
                                             {
-                                                "var": "payload.dateVax"
+                                                "var": "payload.date_vaccine"
                                             },
                                             14,
                                             "day"
@@ -559,7 +559,7 @@
                                     {
                                         "plusTime": [
                                             {
-                                                "var": "payload.dateVax"
+                                                "var": "payload.date_vaccine"
                                             },
                                             365,
                                             "day"
@@ -599,7 +599,7 @@
                     {
                         "===": [
                             {
-                                "var": "payload.certType"
+                                "var": "payload.cert_type"
                             },
                             1
                         ]
@@ -607,12 +607,12 @@
                     {
                         "and": [
                             {
-                                "var": "payload.dosesDone"
+                                "var": "payload.doses_done"
                             },
                             {
                                 ">": [
                                     {
-                                        "var": "payload.dosesDone"
+                                        "var": "payload.doses_done"
                                     },
                                     0
                                 ]
