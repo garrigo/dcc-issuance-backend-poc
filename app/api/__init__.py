@@ -206,13 +206,14 @@ def sign():
                     1: {
                         "v": [
                             {
-                                "tg": int(request.form['tg']),
-                                "mp": int(request.form['mp']),
-                                "ma": request.form['ma'],
                                 "dn": int(request.form['dn']),
                                 "sd": int(request.form['sd']),
-                                # "dt": request.form['dt'],
-                                "dt": vax_date
+                                # "tg": "840539006",
+                                # "mp": "EU/1/20/1528",
+                                # "dt": "2022-01-15"
+                                "mp": 840539006,
+                                "tg": 840539006,
+                                "dt": vax_date,
                             }
                         ],
                         "nam": {
@@ -221,9 +222,10 @@ def sign():
                             # "gnt": request.form['gn'],
                             "gn": request.form['gn'],
                         },
-                        # "ver": request.form['ver'],
+                        # "ver": "1.3.0",
+                        # "dob": "1995-05-18",
+                        "ver": 2,
                         "dob": dob,
-                        # "dob": request.form['dob'],
                     }
                 }
             }

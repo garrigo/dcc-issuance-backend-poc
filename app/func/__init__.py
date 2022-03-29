@@ -372,11 +372,13 @@ def sign_GP(payload_dict, kid_int=1, algo=0):
     decoded = Sign1Message.decode(encoded)
     decoded.key = cose_key
     assert(decoded.verify_signature())
+    # print((encoded))
     print(len(encoded))
     cose_hex = bytes.fromhex(encoded.hex())
     print(cose_hex.hex())
     zlib_data = zlib.compress(cose_hex) 
     base45_data = base45.b45encode(zlib_data)
     base45_data = "HC1:"+base45_data.decode('utf-8')
+    print((base45_data))
     print(len(base45_data))
     return base45_data

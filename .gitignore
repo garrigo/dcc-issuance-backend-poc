@@ -8,3 +8,4 @@ server.crt
 *.pyc
 *.pyc
 *.p12
+*.pyc
