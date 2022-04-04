@@ -74,7 +74,7 @@ def sign():
             return response
             
 
-        base45_data = sign_newcose(payload)
+        base45_data = sign_dcc(payload)
         if not base45_data:
             base45_data =""
         response = make_response(render_template('index.html',

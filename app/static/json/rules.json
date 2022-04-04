@@ -367,7 +367,7 @@
                                     {
                                         "var": "payload.test_result"
                                     },
-                                    "0"
+                                    1
                                 ]
                             }
                         ]

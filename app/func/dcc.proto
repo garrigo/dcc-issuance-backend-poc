@@ -1,0 +1,44 @@
+syntax = "proto2";
+
+package tutorial;
+
+
+message DCC {
+  required uint32 version = 1;
+  required uint32 algorithm = 2;
+  required uint32 kid = 3;
+  required uint32 not_before  = 4;
+  required uint32 not_after  = 5;
+  required string name = 6;
+  required string surname = 7;
+  required uint32 date_of_birth = 8;
+//  required CertificateType cert_type = 9;
+  required uint32 disease = 10;
+
+
+  message Vaccine {
+    required uint32 vaccine = 1;
+    required uint32 doses_done = 2;
+    required uint32 doses_required = 3;
+    required uint32 date_vaccine = 4;
+  }
+
+  message Test {
+    required bool test_result = 1;
+    required uint32 test_used = 2;
+    required uint32 date_test = 3;
+  }
+
+  message Recovery {
+    required uint32 date_test = 1;
+    required uint32 date_from = 2;
+    required uint32 date_until = 3;
+  }
+
+  oneof type {
+    Vaccine v = 11;
+    Test t = 12;
+    Recovery r = 13;
+  }
+
+}

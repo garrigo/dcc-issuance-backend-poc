@@ -23,7 +23,7 @@ from cryptography import x509
 from cryptography.hazmat.primitives import serialization, hashes
 import rsa
 import base64
-
+from app.func import dcc_pb2
 
 
 def add_storedKeys(store_path, psw):
@@ -88,6 +88,35 @@ def encodeDCC(payload):
         dcc = encode(payload, schema)
     return dcc
 
+
+def encodeDCCProtoBuffer(payload):
+    dcc = dcc_pb2.DCC()
+    dcc.version = payload['version']
+    dcc.algorithm = payload['algorithm']
+    dcc.kid = payload['kid']
+    dcc.version = payload['version']
+    dcc.not_before = payload['not_before']
+    dcc.not_after = payload['not_after']
+    dcc.name = payload['name']
+    dcc.surname = payload['surname']
+    dcc.date_of_birth = payload['date_of_birth']
+    dcc.disease = payload['disease']
+    if payload['cert_type'] == 1:
+        dcc.v.vaccine = payload['vaccine']
+        dcc.v.doses_done = payload['doses_done']
+        dcc.v.doses_required = payload['doses_required']
+        dcc.v.date_vaccine = payload['date_vaccine']
+    elif payload['cert_type'] == 2:
+        dcc.t.test_result = payload['test_result']
+        dcc.t.test_used = payload['test_used']
+        dcc.t.date_test = payload['date_test']
+    elif payload['cert_type'] == 3:
+        dcc.r.date_test = payload['date_test']
+        dcc.r.date_from = payload['date_from']
+        dcc.r.date_until = payload['date_until']
+    else:
+        raise Exception("Certificate type not recognized.")
+    return dcc
 
 # Decode DCC
 def decode_newcose(payload):
@@ -234,7 +263,7 @@ def verify_newcose(payload):
         #open public key
         pass
 
-def sign_newcose(payload_dict, algo=0, kid=2, version=1):
+def sign_dcc(payload_dict, algo=0, kid=2, version=1):
     # try:
         #open private key store
         if (algo == 0):
@@ -252,8 +281,15 @@ def sign_newcose(payload_dict, algo=0, kid=2, version=1):
         payload_dict["algorithm"] = algo
         payload_dict["kid"] = kid
         payload_dict["version"] = version
-        #create dcc payload
+        print(payload_dict)
+        #serialize dcc payload using experimental data format
         dcc_payload = encodeDCC(payload_dict)  
+        print(len(dcc_payload))
+        print(dcc_payload)
+        #serialize dcc payload using Protocol Buffers
+        dcc_payload = encodeDCCProtoBuffer(payload_dict).SerializeToString()
+        print(len(dcc_payload))
+        print(dcc_payload)
         #sign dcc_payload bytes
         if algo == 0: 
             private_key = SigningKey.from_der(pk_der)
@@ -288,7 +324,7 @@ def sign_newcose(payload_dict, algo=0, kid=2, version=1):
         # print(base32_data)
         # print(base64_data)
         #check if generated signature is correct
-        verify_newcose(base45_data2)
+        # verify_newcose(base45_data2)
 
         # decode_newcose(base45_data)
         return base45_data2
