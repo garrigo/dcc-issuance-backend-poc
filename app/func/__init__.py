@@ -84,7 +84,7 @@ def encode (payload, schema):
 def encodeDCC(payload):
     dcc = b''
     with open("app/static/json/dccBlueprint.json", "r") as f:
-        schema = (json.load(f))[str(payload["version"])]["schema"]
+        schema = (json.load(f))["schema"]
         dcc = encode(payload, schema)
     return dcc
 
@@ -94,13 +94,14 @@ def encodeDCCProtoBuffer(payload):
     dcc.version = payload['version']
     dcc.algorithm = payload['algorithm']
     dcc.kid = payload['kid']
-    dcc.version = payload['version']
     dcc.not_before = payload['not_before']
     dcc.not_after = payload['not_after']
+    dcc.iss = payload['iss']
     dcc.name = payload['name']
     dcc.surname = payload['surname']
     dcc.date_of_birth = payload['date_of_birth']
     dcc.disease = payload['disease']
+    # dcc.cert_type = payload['cert_type']
     if payload['cert_type'] == 1:
         dcc.v.vaccine = payload['vaccine']
         dcc.v.doses_done = payload['doses_done']
@@ -263,7 +264,7 @@ def verify_newcose(payload):
         #open public key
         pass
 
-def sign_dcc(payload_dict, algo=0, kid=2, version=1):
+def sign_dcc(payload_dict, algo=0, kid=2, version="1.3.0"):
     # try:
         #open private key store
         if (algo == 0):
@@ -281,15 +282,18 @@ def sign_dcc(payload_dict, algo=0, kid=2, version=1):
         payload_dict["algorithm"] = algo
         payload_dict["kid"] = kid
         payload_dict["version"] = version
+        payload_dict["iss"] = "IT"
         print(payload_dict)
         #serialize dcc payload using experimental data format
         dcc_payload = encodeDCC(payload_dict)  
-        print(len(dcc_payload))
-        print(dcc_payload)
+        print("Experimental length: ",len(dcc_payload))
+
         #serialize dcc payload using Protocol Buffers
-        dcc_payload = encodeDCCProtoBuffer(payload_dict).SerializeToString()
-        print(len(dcc_payload))
-        print(dcc_payload)
+        # proto_dcc = encodeDCCProtoBuffer(payload_dict)
+        # dcc_payload = proto_dcc.SerializeToString()
+        # print("Protobuf length: ",len(dcc_payload))
+        
+
         #sign dcc_payload bytes
         if algo == 0: 
             private_key = SigningKey.from_der(pk_der)
@@ -299,13 +303,15 @@ def sign_dcc(payload_dict, algo=0, kid=2, version=1):
             signature = rsa.sign(dcc_payload, private_key, 'SHA-256')
         #concatenate payload and signature bytes
         dcc = dcc_payload + signature 
-        
-        # print("Uncompressed: "+str(len(dcc)))
+        print(dcc.hex())
+        # proto_dcc.signature = signature
+        # proto_dcc = proto_dcc.SerializeToString()
+        # print("Byte length: ",len(proto_dcc))
+        # print(proto_dcc.hex())
         #compress full payload with zlib -> encode in base45 -> from bytes to string for the qr code creation
-        zlib_data = zlib.compress(dcc)
-        # print("Compressed: "+str(len(zlib_data)))
-        base45_data = base45.b45encode(zlib_data)
-        base45_data2 = base45.b45encode(dcc)
+        # zlib_data = zlib.compress(dcc)
+        
+        base45_data = base45.b45encode(dcc)
         base32_data = base64.b32encode(dcc)
         base64_data = base64.b64encode(dcc)
         
@@ -314,20 +320,19 @@ def sign_dcc(payload_dict, algo=0, kid=2, version=1):
         
         iso_8859_1 = dcc.decode('iso-8859-1')
         base45_data = base45_data.decode('utf-8')
-        base45_data2 = base45_data2.decode('utf-8')
         base32_data = base32_data.decode('utf-8')
         base64_data = base64_data.decode('utf-8')
         # print("Uncompressed base45: "+str(len(base45_data2)))
         # print("Uncompressed iso_8859_1: "+str(len(iso_8859_1)))
         # print("Compressed base45: "+str(len(base45_data)))
-        print(base45_data2)
+        print(base45_data)
         # print(base32_data)
         # print(base64_data)
         #check if generated signature is correct
         # verify_newcose(base45_data2)
 
         # decode_newcose(base45_data)
-        return base45_data2
+        return base45_data
         return dcc.hex()
     # except Exception as e:
     #     print("ERROR at Sign: " + str(e))

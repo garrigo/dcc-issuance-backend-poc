@@ -201,7 +201,7 @@ def dccBlueprint():
 #             payload = {
 #                 4: today+YEAR_IN_SECONDS,
 #                 6: today,
-#                 # 1: request.form['issued'],
+#                 1: "IT",
 #                 -260: {
 #                     1: {
 #                         "v": [
@@ -211,8 +211,8 @@ def dccBlueprint():
 #                                 # "tg": "840539006",
 #                                 # "mp": "EU/1/20/1528",
 #                                 # "dt": "2022-01-15"
-#                                 "mp": 840539006,
-#                                 "tg": 840539006,
+#                                 "mp": 1,
+#                                 "tg": 1,
 #                                 "dt": vax_date,
 #                             }
 #                         ],
@@ -224,7 +224,7 @@ def dccBlueprint():
 #                         },
 #                         # "ver": "1.3.0",
 #                         # "dob": "1995-05-18",
-#                         "ver": 2,
+#                         "ver": "1.3.0",
 #                         "dob": dob,
 #                     }
 #                 }

@@ -19,7 +19,7 @@ $( document ).ready(function() {
             var src = toGif(quickresponse(payload,'L'), 7, undefined, 3).replace("image/gif", "image/png");
 
             /* aztec testing */
-            // var src = toGif(aztec(payload, 2), 7, undefined, 3)).replace("image/gif", "image/png");
+            // src = toGif(aztec(payload, 2), 7, undefined, 3).replace("image/gif", "image/png");
 
             var image = document.createElement("img");
             image.setAttribute("src", src);

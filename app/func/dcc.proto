@@ -4,16 +4,17 @@ package tutorial;
 
 
 message DCC {
-  required uint32 version = 1;
+  required string version = 1;
   required uint32 algorithm = 2;
   required uint32 kid = 3;
   required uint32 not_before  = 4;
   required uint32 not_after  = 5;
-  required string name = 6;
-  required string surname = 7;
-  required uint32 date_of_birth = 8;
-//  required CertificateType cert_type = 9;
-  required uint32 disease = 10;
+  required string iss = 6;
+  required string name = 7;
+  required string surname = 8;
+  required uint32 date_of_birth = 9;
+//  required CertificateType cert_type = 10;
+  required uint32 disease = 11;
 
 
   message Vaccine {
@@ -36,9 +37,10 @@ message DCC {
   }
 
   oneof type {
-    Vaccine v = 11;
-    Test t = 12;
-    Recovery r = 13;
+    Vaccine v = 12;
+    Test t = 13;
+    Recovery r = 14;
   }
 
+  optional bytes signature = 15;
 }
