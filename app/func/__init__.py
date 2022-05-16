@@ -283,10 +283,10 @@ def sign_dcc(payload_dict, algo=0, kid=2, version="1.3.0"):
         payload_dict["kid"] = kid
         payload_dict["version"] = version
         payload_dict["iss"] = "IT"
-        print(payload_dict)
+        # print(payload_dict)
         #serialize dcc payload using experimental data format
         dcc_payload = encodeDCC(payload_dict)  
-        print("Experimental length: ",len(dcc_payload))
+        # print("Experimental length: ",len(dcc_payload))
 
         #serialize dcc payload using Protocol Buffers
         # proto_dcc = encodeDCCProtoBuffer(payload_dict)
@@ -303,7 +303,7 @@ def sign_dcc(payload_dict, algo=0, kid=2, version="1.3.0"):
             signature = rsa.sign(dcc_payload, private_key, 'SHA-256')
         #concatenate payload and signature bytes
         dcc = dcc_payload + signature 
-        print(dcc.hex())
+        # print(dcc.hex())
         # proto_dcc.signature = signature
         # proto_dcc = proto_dcc.SerializeToString()
         # print("Byte length: ",len(proto_dcc))
@@ -325,7 +325,7 @@ def sign_dcc(payload_dict, algo=0, kid=2, version="1.3.0"):
         # print("Uncompressed base45: "+str(len(base45_data2)))
         # print("Uncompressed iso_8859_1: "+str(len(iso_8859_1)))
         # print("Compressed base45: "+str(len(base45_data)))
-        print(base45_data)
+        # print(base45_data)
         # print(base32_data)
         # print(base64_data)
         #check if generated signature is correct
@@ -376,12 +376,12 @@ def sign_GP(payload_dict, kid_int=1, algo=0):
     decoded.key = cose_key
     assert(decoded.verify_signature())
     # print((encoded))
-    print(len(encoded))
+    # print(len(encoded))
     cose_hex = bytes.fromhex(encoded.hex())
-    print(cose_hex.hex())
+    # print(cose_hex.hex())
     zlib_data = zlib.compress(cose_hex) 
     base45_data = base45.b45encode(zlib_data)
     base45_data = "HC1:"+base45_data.decode('utf-8')
-    print((base45_data))
-    print(len(base45_data))
+    # print((base45_data))
+    # print(len(base45_data))
     return base45_data
