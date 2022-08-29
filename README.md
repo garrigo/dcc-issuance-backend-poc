@@ -1,5 +1,7 @@
 # DCC Issuance Backend
 
+Simulation of an issuance backend for Digital COVID Certificates with improved space complexity.
+
 ---
 
 ## How to test 
